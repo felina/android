@@ -4,5 +4,7 @@
     <string name="app_name">Felina</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="select">Select</string>
+    <string name="ContentDescription">Image from gallery</string>
 
 </resources>
