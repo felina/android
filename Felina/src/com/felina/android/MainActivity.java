@@ -16,15 +16,13 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
 	
-	SectionAdapter mAdapter;
-	
-	ViewPager mViewPager;
+	private SectionAdapter mAdapter;
+	private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
         //Create the adapter to fragments for the app sections.
         mAdapter = new SectionAdapter(getSupportFragmentManager());
         
@@ -55,6 +53,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
     }
 
+
 	@Override
 	public void onTabSelected(Tab tab,
 			android.support.v4.app.FragmentTransaction ft) {
@@ -77,7 +76,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 	}
 	
 	public static class SectionAdapter extends FragmentStatePagerAdapter {
-	
+			
 		public SectionAdapter(FragmentManager fm) {
 			super(fm);
 		}
@@ -86,7 +85,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 		public Fragment getItem(int i) {
 			switch(i) {
 			
-			case 0: return new GalleryFragment();
+			case 0: return new GalleryFragment(); 
 			
 			default: return new DummyFragment();
 			}
@@ -99,9 +98,14 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 		
 		@Override
 		public CharSequence getPageTitle(int position) {
-			// TODO Auto-generated method stub
-			return super.getPageTitle(position);
+			switch (position) {
+			case 0: return "Upload Images";
+			case 1: return "News Feed";
+			case 2: return "Profile";
+			default: return super.getPageTitle(position);
+			}
 		}
+		
 	}
 
 	public static class DummyFragment extends SherlockFragment {

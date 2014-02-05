@@ -4,13 +4,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
+    <LinearLayout 
+        android:id="@+id/buttonLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+        
+     <Button android:id="@+id/cameraBtn"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:text="@string/camera"  
+        />
+    
     <Button android:id="@+id/selectBtn"
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:text="@string/select"  
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         />
+        
+    </LinearLayout>
+
     
     <GridView android:id="@+id/imageGrid"
         android:layout_width="fill_parent" 
@@ -21,6 +35,6 @@
         android:columnWidth="90dp"
         android:stretchMode="columnWidth" 
         android:gravity="center"
-        android:layout_above="@id/selectBtn"
+        android:layout_above="@id/buttonLayout"
         />
 </RelativeLayout>

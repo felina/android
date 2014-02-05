@@ -6,5 +6,5 @@
     <string name="hello_world">Hello world!</string>
     <string name="select">Select</string>
     <string name="ContentDescription">Image from gallery</string>
-
+	<string name="camera">Take a picture</string>
 </resources>
