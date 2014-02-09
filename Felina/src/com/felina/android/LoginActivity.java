@@ -33,6 +33,7 @@ public class LoginActivity extends Activity {
 	private  String register;
 	private  String new_account;
 	private List<NameValuePair> nameValuePair;
+	private HttpRequestClient mClient;
 
 	private OnClickListener mListener = new View.OnClickListener() {
 		@Override
@@ -66,7 +67,7 @@ public class LoginActivity extends Activity {
 					    e.printStackTrace();
 					}
 					
-				    Boolean b = MainActivity.mClient.execute(httpLogin) ;
+				    Boolean b = mClient.execute(httpLogin) ;
 					
 				    dialog.dismiss();
 					
@@ -97,7 +98,7 @@ public class LoginActivity extends Activity {
 					    e.printStackTrace();
 					}
 					
-				    Boolean b = MainActivity.mClient.execute(httpRegister) ;
+				    Boolean b = mClient.execute(httpRegister) ;
 					
 				    dialog.dismiss();
 				    
@@ -138,6 +139,8 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		
+		mClient = new HttpRequestClient(this);
+		
 		userBox = (EditText) findViewById(R.id.usernameBox);
 		passBox = (EditText) findViewById(R.id.passwordBox);
 		nameBox = (EditText) findViewById(R.id.nameBox);
@@ -173,10 +176,10 @@ public class LoginActivity extends Activity {
 	
 	private void savePrefs(String username, String password) {
 		System.out.println("Save prefs");
-		SharedPreferences prefs = getSharedPreferences(MainActivity.PREFERENCE_NAME, MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences(HttpRequestClient.PREFERENCE_NAME, MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(MainActivity.INPUT_USERNAME, username);
-		editor.putString(MainActivity.INPUT_PASSWORD, password);
+		editor.putString(HttpRequestClient.INPUT_USERNAME, username);
+		editor.putString(HttpRequestClient.INPUT_PASSWORD, password);
 		editor.commit();
 		
 		System.out.println(prefs.getString("username", null)+"  "+prefs.getString("pass", null));
