@@ -6,5 +6,15 @@
     <string name="hello_world">Hello world!</string>
     <string name="select">Select</string>
     <string name="ContentDescription">Image from gallery</string>
-	<string name="camera">Take a picture</string>
+    <string name="camera">Take a picture</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="username">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Log In</string>
+    <string name="invalid_login">Incorrect email or password</string>
+    <string name="register">Register</string>
+    <string name="new_account">Sign up for Felina</string>
+    <string name="name">Name</string>
+    
+
 </resources>
