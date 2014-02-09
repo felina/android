@@ -1,5 +1,6 @@
 package com.felina.android;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,15 +17,29 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
 	
+	private static final int REQUEST_LOGIN = 1001;
 	private SectionAdapter mAdapter;
 	private ViewPager mViewPager;
+	public static HttpRequestClient mClient ;
+	public static final String INPUT_USERNAME = "username";
+	public static final String INPUT_PASSWORD = "password";
+	public static final String PREFERENCE_NAME = "credentials";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        mClient = new HttpRequestClient(this);
         //Create the adapter to fragments for the app sections.
         mAdapter = new SectionAdapter(getSupportFragmentManager());
+
+        if(!mClient.loginCheck()) {
+        	System.out.println("LOGIN ACTIVITY");
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            startActivityForResult(loginIntent, REQUEST_LOGIN);	
+        }        
         
         // get the action bar. 
         final ActionBar actionBar = getSupportActionBar();
@@ -53,6 +68,20 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	if(requestCode == REQUEST_LOGIN) {
+    		switch(resultCode) {
+    		
+    		case RESULT_OK:
+    		break;
+    		
+    		case RESULT_CANCELED:
+    			finish();
+    			break;
+    		}
+    	}
+    }
 
 	@Override
 	public void onTabSelected(Tab tab,

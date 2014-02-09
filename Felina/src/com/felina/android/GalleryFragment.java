@@ -31,7 +31,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class GalleryFragment extends SherlockFragment implements LoaderManager.LoaderCallbacks<Cursor>  {
 	
 	private static final int IMAGE_LOADER = 0;
-	private static final int REQUEST_IMAGE_CAPTURE = 1001;
+	private static final int REQUEST_IMAGE_CAPTURE = 1002;
 	private static final String IMAGE = "image";
 	private static final String CHECKBOX = "checkbox";
 	private String mImagePath;
@@ -63,8 +63,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 		});
 		mAdapter = new GalleryAdapter();
 		gallery.setAdapter(mAdapter);
-		
-		
+				
 		return rootView;
 	}
 	
