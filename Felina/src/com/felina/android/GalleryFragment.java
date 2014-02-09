@@ -5,6 +5,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,11 +23,13 @@ import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -34,17 +42,40 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	private static final int REQUEST_IMAGE_CAPTURE = 1002;
 	private static final String IMAGE = "image";
 	private static final String CHECKBOX = "checkbox";
+	public static final String EXTRA_SELECTION = "extra_selection";
+	public static final String EXTRA_PATHS = "extra_paths";
 	private String mImagePath;
 	private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
 	private GridView gallery;
 	private int count;
 	private Bitmap[] thumbnails;
 	private String[] paths;
-	private Boolean[] selection;
-	private GalleryAdapter mAdapter;
-//	private
-	
-	
+	private boolean[] selection;
+	private GalleryAdapter mAdapter;	
+	private int selectedCount;
+	private Button uploadBtn;
+	private Button cameraBtn;
+	private Button selectBtn;
+
+	private OnClickListener mBtnListener = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			switch(v.getId()) {
+			case R.id.cameraBtn:
+				takePicture();
+				break;
+				
+			case R.id.uploadBtn:
+				uploadImages();
+				break;
+				
+			case R.id.selectBtn:
+			}
+			
+		}
+	};
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -54,13 +85,18 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 		getSherlockActivity().getSupportLoaderManager().initLoader(IMAGE_LOADER, null, mCallbacks);
 
 		gallery = (GridView) rootView.findViewById(R.id.imageGrid);
-		rootView.findViewById(R.id.cameraBtn).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				takePicture();
-			}
-		});
+		uploadBtn = (Button) rootView.findViewById(R.id.uploadBtn);
+		cameraBtn = (Button) rootView.findViewById(R.id.cameraBtn);
+		selectBtn = (Button) rootView.findViewById(R.id.selectBtn);
+
+		uploadBtn.setOnClickListener(mBtnListener);
+		cameraBtn.setOnClickListener(mBtnListener);
+		selectBtn.setOnClickListener(mBtnListener);
+
+		uploadBtn.setEnabled(false);
+		
+		selectedCount = 0;
+		
 		mAdapter = new GalleryAdapter();
 		gallery.setAdapter(mAdapter);
 				
@@ -101,6 +137,14 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 		Uri content = Uri.fromFile(photo);
 		intent.setData(content);
 		getActivity().sendBroadcast(intent);
+	}
+	
+	private void uploadImages() {
+		
+		Intent service = new Intent(getActivity(), ImageUploadService.class);
+		service.putExtra(EXTRA_SELECTION, selection);
+		service.putExtra(EXTRA_PATHS, paths);
+		getActivity().startService(service);
 	}
 	
 
@@ -160,7 +204,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 		count = mCursor.getCount();
 		paths = new String[count];
 		thumbnails = new Bitmap[count];
-		selection = new Boolean[count];
+		selection = new boolean[count];
 		for (int i = 0; i < count; i++) {
 			mCursor.moveToPosition(i);
 			int id = mCursor.getInt(idColIndex);
@@ -191,11 +235,15 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 					if(selection[id]) {
 						selection[id] = false;
 						checkBox.setChecked(false);
+						selectedCount--;
 					}
 					else {
 						selection[id] = true;
 						checkBox.setChecked(true);
+						selectedCount++;
 					}
+					Log.d("GalleryFragment :", "selectedCount: "+selectedCount);
+					uploadBtn.setEnabled(selectedCount>0);
 				}	
 			}
 		};
@@ -226,12 +274,16 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 			view = mInflater.inflate(R.layout.gallery_item, null);
 			imageView = (ImageView) view.findViewById(R.id.imageThumb);
 			checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+			
 			imageView.setImageBitmap(thumbnails[i]);
 			imageView.setOnClickListener(mListener);
 			imageView.setId(i);
 			imageView.setTag(IMAGE);
-			checkBox.setTag(CHECKBOX);
+			
 			checkBox.setChecked(selection[i]);
+			checkBox.setOnClickListener(mListener);
+			checkBox.setTag(CHECKBOX);
+			checkBox.setId(i);
 			return view;
 		}
 		

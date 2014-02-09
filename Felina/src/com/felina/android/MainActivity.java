@@ -20,11 +20,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 	private static final int REQUEST_LOGIN = 1001;
 	private SectionAdapter mAdapter;
 	private ViewPager mViewPager;
-	public static HttpRequestClient mClient ;
-	public static final String INPUT_USERNAME = "username";
-	public static final String INPUT_PASSWORD = "password";
-	public static final String PREFERENCE_NAME = "credentials";
-
+	private HttpRequestClient mClient ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +35,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         	System.out.println("LOGIN ACTIVITY");
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivityForResult(loginIntent, REQUEST_LOGIN);	
-        }        
+        }
         
         // get the action bar. 
         final ActionBar actionBar = getSupportActionBar();
