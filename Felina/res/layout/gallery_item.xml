@@ -4,13 +4,13 @@
     android:layout_height="90dp"
     android:clipChildren="false" >
 
-    <ImageView
+    <com.felina.android.GridImageView
         android:id="@+id/imageThumb"
         android:layout_width="90dp"
         android:layout_height="90dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:scaleType="centerInside"
+        android:scaleType="centerCrop"
     	android:adjustViewBounds="true"
         android:contentDescription="@string/ContentDescription" />
 
@@ -18,7 +18,7 @@
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/imageThumb"
-        android:layout_alignTop="@+id/imageThumb"/>
+        android:layout_alignParentRight="true"
+        />
  
 </RelativeLayout>

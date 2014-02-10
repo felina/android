@@ -686,10 +686,11 @@ containing a value of this type.
         public static final int abs__bright_foreground_disabled_holo_light=0x7f060005;
         public static final int abs__bright_foreground_holo_dark=0x7f060002;
         public static final int abs__bright_foreground_holo_light=0x7f060003;
-        public static final int abs__primary_text_disable_only_holo_dark=0x7f060006;
-        public static final int abs__primary_text_disable_only_holo_light=0x7f060007;
-        public static final int abs__primary_text_holo_dark=0x7f060008;
-        public static final int abs__primary_text_holo_light=0x7f060009;
+        public static final int abs__primary_text_disable_only_holo_dark=0x7f060007;
+        public static final int abs__primary_text_disable_only_holo_light=0x7f060008;
+        public static final int abs__primary_text_holo_dark=0x7f060009;
+        public static final int abs__primary_text_holo_light=0x7f06000a;
+        public static final int black=0x7f060006;
     }
     public static final class dimen {
         /**  Default height of an action bar. 
@@ -913,7 +914,8 @@ containing a value of this type.
         public static final int abs__textfield_searchview_right_holo_light=0x7f02006e;
         public static final int abs__toast_frame=0x7f02006f;
         public static final int ic_launcher=0x7f020070;
-        public static final int shutter=0x7f020071;
+        public static final int ic_menu_camera=0x7f020071;
+        public static final int shutter=0x7f020072;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f040020;

@@ -4,7 +4,7 @@
     <string name="app_name">Felina</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="select">Select</string>
+    <string name="select">Select all</string>
     <string name="ContentDescription">Image from gallery</string>
     <string name="camera">Take a picture</string>
     <string name="title_activity_login">LoginActivity</string>
@@ -16,6 +16,7 @@
     <string name="new_account">Sign up for Felina</string>
     <string name="name">Name</string>
     <string name="upload">Upload</string>
-   
 
+   	<color name="black">#000000</color>
+   	
 </resources>
