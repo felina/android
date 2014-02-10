@@ -4,10 +4,11 @@
     android:layout_height="90dp"
     android:clipChildren="false" >
 
-    <com.felina.android.GridImageView
+    <!-- <com.felina.android.GridImageView -->
+    <ImageView
         android:id="@+id/imageThumb"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:scaleType="centerCrop"

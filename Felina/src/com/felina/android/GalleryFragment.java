@@ -5,12 +5,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +26,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -54,7 +49,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	private GalleryAdapter mAdapter;	
 	private int selectedCount;
 	private Button uploadBtn;
-	private Button cameraBtn;
+	private ImageButton cameraBtn;
 	private Button selectBtn;
 
 	private OnClickListener mBtnListener = new View.OnClickListener() {
@@ -86,7 +81,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 
 		gallery = (GridView) rootView.findViewById(R.id.imageGrid);
 		uploadBtn = (Button) rootView.findViewById(R.id.uploadBtn);
-		cameraBtn = (Button) rootView.findViewById(R.id.cameraBtn);
+		cameraBtn = (ImageButton) rootView.findViewById(R.id.cameraBtn);
 		selectBtn = (Button) rootView.findViewById(R.id.selectBtn);
 
 		uploadBtn.setOnClickListener(mBtnListener);
