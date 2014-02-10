@@ -6,22 +6,32 @@
     
     <LinearLayout 
         android:id="@+id/buttonLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:background="@color/black">
         
-     <Button android:id="@+id/cameraBtn"
+     <ImageButton 
+        android:id="@+id/cameraBtn"
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
-        android:text="@string/camera"  
+  		android:src="@drawable/ic_menu_camera"
+  		android:contentDescription="@string/ContentDescription"
         />
-    
-    <Button android:id="@+id/selectBtn"
+       
+    <Button 
+        android:id="@+id/selectBtn"
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:text="@string/select"  
         />
+    
+    <Button 
+        android:id="@+id/uploadBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/upload"/>
         
     </LinearLayout>
 
