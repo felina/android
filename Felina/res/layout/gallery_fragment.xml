@@ -13,12 +13,13 @@
         android:gravity="center"
         android:background="@color/black">
         
-     <ImageButton 
+     <ImageView 
         android:id="@+id/cameraBtn"
         android:layout_width="wrap_content" 
         android:layout_height="fill_parent"
   		android:src="@drawable/ic_menu_camera"
   		android:contentDescription="@string/ContentDescription"
+  		android:clickable="true"
         />
        
     <Button 

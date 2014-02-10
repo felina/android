@@ -49,7 +49,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	private GalleryAdapter mAdapter;	
 	private int selectedCount;
 	private Button uploadBtn;
-	private ImageButton cameraBtn;
+	private ImageView cameraBtn;
 	private Button selectBtn;
 
 	private OnClickListener mBtnListener = new View.OnClickListener() {
@@ -81,7 +81,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 
 		gallery = (GridView) rootView.findViewById(R.id.imageGrid);
 		uploadBtn = (Button) rootView.findViewById(R.id.uploadBtn);
-		cameraBtn = (ImageButton) rootView.findViewById(R.id.cameraBtn);
+		cameraBtn = (ImageView) rootView.findViewById(R.id.cameraBtn);
 		selectBtn = (Button) rootView.findViewById(R.id.selectBtn);
 
 		uploadBtn.setOnClickListener(mBtnListener);
