@@ -1,11 +1,22 @@
 package com.felina.android;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +29,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
 	
 	private static final int REQUEST_LOGIN = 1001;
+	private static final int REQUEST_IMAGE_CAPTURE = 1002;
 	private SectionAdapter mAdapter;
 	private ViewPager mViewPager;
 	private HttpRequestClient mClient ;
@@ -32,7 +44,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         mAdapter = new SectionAdapter(getSupportFragmentManager());
 
         if(!mClient.loginCheck()) {
-        	System.out.println("LOGIN ACTIVITY");
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivityForResult(loginIntent, REQUEST_LOGIN);	
         }
@@ -63,10 +74,37 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 		mViewPager.setCurrentItem(1);
 
     }
+    
+    
+
+	
+	private void addToGallery(final String mImagePath) {
+//		System.out.println("ok");
+//		Uri content = Uri.fromFile(file);
+//		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, content);
+//		sendBroadcast(intent);
+		System.out.println("Felina1");
+		MediaScannerConnection.scanFile(this, new String[]{mImagePath}, null, 
+				new MediaScannerConnection.OnScanCompletedListener() {
+			
+			@Override
+			public void onScanCompleted(String path, Uri uri) {
+				if(mImagePath.equals(path)) {
+					Log.d("MediaScanner: ", "Scan completed");
+				}
+			}
+		});
+		System.out.println("Felina2");
+		
+	}
+	
+	
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	Log.d("MainActivityFelina","something happened");
     	if(requestCode == REQUEST_LOGIN) {
+        	Log.d("MainActivityFelina","login");
     		switch(resultCode) {
     		
     		case RESULT_OK:
@@ -76,6 +114,23 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     			finish();
     			break;
     		}
+    	}
+    	else if ( requestCode == REQUEST_IMAGE_CAPTURE ) {
+        	Log.d("MainActivityFelina", resultCode+" "+RESULT_CANCELED+" "+RESULT_OK+" "+RESULT_FIRST_USER);
+    		if( resultCode == Activity.RESULT_OK ) {
+				System.out.println("allgood");
+				File f = new File(GalleryFragment.mImagePath);
+	            if((f.length())==0){
+	                f.delete();
+	            } 
+			addToGallery(GalleryFragment.mImagePath);
+    		}
+    	}
+    	else {    		
+        	Log.d("MainActivityFelina","something else "+requestCode);
+        	Log.d("MainActivityFelina", resultCode+" "+RESULT_CANCELED+" "+RESULT_OK+" "+RESULT_FIRST_USER);
+        	
+        	super.onActivityResult(resultCode, resultCode, data);
     	}
     }
 

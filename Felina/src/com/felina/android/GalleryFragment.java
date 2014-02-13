@@ -5,20 +5,16 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager.OnActivityResultListener;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -44,7 +40,6 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	private static final String CHECKBOX = "checkbox";
 	public static final String EXTRA_SELECTION = "extra_selection";
 	public static final String EXTRA_PATHS = "extra_paths";
-	private String mImagePath;
 	private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
 	private GridView gallery;
 	private int count;
@@ -56,7 +51,8 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	private Button uploadBtn;
 	private Button cameraBtn;
 	private Button selectBtn;
-
+	public static String mImagePath;
+	
 	private OnClickListener mBtnListener = new View.OnClickListener() {
 		
 		@Override
@@ -103,44 +99,36 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 		return rootView;
 	}
 	
+
+	   public void takePicture() {
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			
+			if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
+				File f = null;
+				try {
+					f = createFile();
+				} catch (IOException e) {
+					System.out.println(e);
+					System.exit(0);
+				}
+				
+				if (f != null) {
+					intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+					getActivity().startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+				}
+			}
+		}
+	   
+
 	private File createFile() throws IOException {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-		File image = File.createTempFile(timeStamp, ".jpg", dir);
+		File image = new File(dir, timeStamp+".jpg");
 		mImagePath = "file: " + image.getAbsolutePath();
 		return image;
 	}
-	
-	private void takePicture() {
-		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		
-		if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
-			File photo = null;
-			
-			try {
-				photo = createFile();
-			} catch (IOException e) {
-				System.out.println(e);
-				System.exit(0);
-			}
-			
-			if (photo != null) {
-				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
-				startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-			}
-		}
-	}
-	
-	private void addToGallery() {
-		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-		File photo = new File(mImagePath);
-		Uri content = Uri.fromFile(photo);
-		intent.setData(content);
-		getActivity().sendBroadcast(intent);
-	}
-	
+
 	private void uploadImages() {
-		
 		Intent service = new Intent(getActivity(), ImageUploadService.class);
 		service.putExtra(EXTRA_SELECTION, selection);
 		service.putExtra(EXTRA_PATHS, paths);
@@ -150,13 +138,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if ( requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK ) {
-//			Bundle extras = data.getExtras();
-//			if(extras != null){
-//				Bitmap image = (Bitmap) extras.get("data");	
-//			}
-			addToGallery();
-		}
+		Log.d("CAMERARESULT: ", "got something "+requestCode );		
 	}
 
 	@Override
@@ -242,7 +224,6 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 						checkBox.setChecked(true);
 						selectedCount++;
 					}
-					Log.d("GalleryFragment :", "selectedCount: "+selectedCount);
 					uploadBtn.setEnabled(selectedCount>0);
 				}	
 			}
