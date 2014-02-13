@@ -83,7 +83,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 //		Uri content = Uri.fromFile(file);
 //		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, content);
 //		sendBroadcast(intent);
-		System.out.println("Felina1");
 		MediaScannerConnection.scanFile(this, new String[]{mImagePath}, null, 
 				new MediaScannerConnection.OnScanCompletedListener() {
 			
@@ -93,9 +92,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 					Log.d("MediaScanner: ", "Scan completed");
 				}
 			}
-		});
-		System.out.println("Felina2");
-		
+		});		
 	}
 	
 	

@@ -49,7 +49,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	private GalleryAdapter mAdapter;	
 	private int selectedCount;
 	private Button uploadBtn;
-	private Button cameraBtn;
+	private ImageView cameraBtn;
 	private Button selectBtn;
 	public static String mImagePath;
 	
@@ -82,7 +82,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 
 		gallery = (GridView) rootView.findViewById(R.id.imageGrid);
 		uploadBtn = (Button) rootView.findViewById(R.id.uploadBtn);
-		cameraBtn = (Button) rootView.findViewById(R.id.cameraBtn);
+		cameraBtn = (ImageView) rootView.findViewById(R.id.cameraBtn);
 		selectBtn = (Button) rootView.findViewById(R.id.selectBtn);
 
 		uploadBtn.setOnClickListener(mBtnListener);
