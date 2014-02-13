@@ -1,11 +1,18 @@
 package com.felina.android;
 
+import java.io.File;
+
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +21,17 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
 	
 	private static final int REQUEST_LOGIN = 1001;
+	private static final int REQUEST_IMAGE_CAPTURE = 1002;
 	private SectionAdapter mAdapter;
 	private ViewPager mViewPager;
-	private HttpRequestClient mClient ;
+	private HttpRequestClient mClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +43,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         mAdapter = new SectionAdapter(getSupportFragmentManager());
 
         if(!mClient.loginCheck()) {
-        	System.out.println("LOGIN ACTIVITY");
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivityForResult(loginIntent, REQUEST_LOGIN);	
         }
@@ -63,10 +73,60 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 		mViewPager.setCurrentItem(1);
 
     }
+    
+    private void logout() {
+    	SharedPreferences prefs = getSharedPreferences(HttpRequestClient.PREFERENCE_NAME, MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(HttpRequestClient.INPUT_USERNAME, "");
+		editor.putString(HttpRequestClient.INPUT_PASSWORD, "");
+		editor.commit();
+        Intent loginIntent = new Intent(this, LoginActivity.class);
+        startActivity(loginIntent, null);
+        finish();
+    }
+	
+	private void addToGallery(final String mImagePath) {
+//		System.out.println("ok");
+//		Uri content = Uri.fromFile(file);
+//		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, content);
+//		sendBroadcast(intent);
+		MediaScannerConnection.scanFile(this, new String[]{mImagePath}, null, 
+				new MediaScannerConnection.OnScanCompletedListener() {
+			
+			@Override
+			public void onScanCompleted(String path, Uri uri) {
+				if(mImagePath.equals(path)) {
+					Log.d("MediaScanner: ", "Scan completed");
+				}
+			}
+		});		
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		if(item.getItemId()==R.id.action_logout){
+			logout();
+			return true;
+		}
+		else {
+			return super.onOptionsItemSelected(item);
+	
+		}
+	}
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	Log.d("MainActivityFelina","something happened");
     	if(requestCode == REQUEST_LOGIN) {
+        	Log.d("MainActivityFelina","login");
     		switch(resultCode) {
     		
     		case RESULT_OK:
@@ -76,6 +136,23 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     			finish();
     			break;
     		}
+    	}
+    	else if ( requestCode == REQUEST_IMAGE_CAPTURE ) {
+        	Log.d("MainActivityFelina", resultCode+" "+RESULT_CANCELED+" "+RESULT_OK+" "+RESULT_FIRST_USER);
+    		if( resultCode == Activity.RESULT_OK ) {
+				System.out.println("allgood");
+				File f = new File(GalleryFragment.mImagePath);
+	            if((f.length())==0){
+	                f.delete();
+	            } 
+			addToGallery(GalleryFragment.mImagePath);
+    		}
+    	}
+    	else {    		
+        	Log.d("MainActivityFelina","something else "+requestCode);
+        	Log.d("MainActivityFelina", resultCode+" "+RESULT_CANCELED+" "+RESULT_OK+" "+RESULT_FIRST_USER);
+        	
+        	super.onActivityResult(resultCode, resultCode, data);
     	}
     }
 

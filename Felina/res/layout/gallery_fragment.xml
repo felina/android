@@ -2,45 +2,56 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
-    <LinearLayout 
+    android:orientation="vertical" 
+    android:layout_marginTop="@dimen/gallery_spacing"
+    android:layout_marginBottom="@dimen/gallery_spacing">
+
+    <RelativeLayout 
         android:id="@+id/buttonLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+		android:paddingRight="@dimen/activity_horizontal_margin"
+        android:background="@color/gray_button_bar">
         
-     <Button android:id="@+id/cameraBtn"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:text="@string/camera"  
-        />
-    
-    <Button android:id="@+id/selectBtn"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:text="@string/select"  
-        />
-    
-    <Button android:id="@+id/uploadBtn"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:text="@string/upload"  
-        />
-        
-    </LinearLayout>
 
-    
+	     <ImageView android:id="@+id/cameraBtn"
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:text="@string/camera"
+	        android:layout_alignParentLeft="true"
+	        android:src="@drawable/ic_menu_camera"
+	        android:contentDescription="@string/ContentDescription"
+	        android:clickable="true"
+	        android:background="?android:attr/selectableItemBackground" />
+	
+	    <Switch android:id="@+id/selectBtn"
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:textOn="@string/unselect"
+	        android:textOff="@string/select"
+	        android:layout_centerInParent="true" />
+	    
+	    <Button android:id="@+id/uploadBtn"
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:text="@string/upload"
+	        android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
+
     <GridView android:id="@+id/imageGrid"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:numColumns="auto_fit" 
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp" 
-        android:columnWidth="90dp"
+        android:verticalSpacing="@dimen/gallery_spacing"
+        android:horizontalSpacing="@dimen/gallery_spacing" 
+        android:columnWidth="@dimen/galler_column_width"
         android:stretchMode="columnWidth" 
         android:gravity="center"
         android:layout_above="@id/buttonLayout"
         />
+    
 </RelativeLayout>
