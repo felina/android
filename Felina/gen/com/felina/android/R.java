@@ -803,6 +803,7 @@ containing a value of this type.
         public static final int gallery_image_height=0x7f070013;
         public static final int gallery_image_width=0x7f070014;
         public static final int gallery_spacing=0x7f070015;
+        public static final int login_button_height=0x7f070018;
         public static final int login_edit_spacing=0x7f070017;
         public static final int login_logo_height=0x7f070011;
         public static final int login_logo_width=0x7f070012;
@@ -997,6 +998,7 @@ containing a value of this type.
         public static final int abs__textButton=0x7f040013;
         public static final int abs__title=0x7f04001b;
         public static final int abs__up=0x7f04000b;
+        public static final int action_logout=0x7f040041;
         public static final int action_settings=0x7f040040;
         public static final int buttonLayout=0x7f040039;
         public static final int cameraBtn=0x7f04003a;
@@ -1062,7 +1064,7 @@ containing a value of this type.
         public static final int main=0x7f0b0001;
     }
     public static final class string {
-        public static final int ContentDescription=0x7f090012;
+        public static final int ContentDescription=0x7f090013;
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
          */
         public static final int abs__action_bar_home_description=0x7f090000;
@@ -1102,21 +1104,22 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abs__shareactionprovider_share_with_application=0x7f090007;
+        public static final int action_logout=0x7f09000f;
         public static final int action_settings=0x7f09000e;
         public static final int app_name=0x7f09000d;
-        public static final int camera=0x7f090013;
-        public static final int hello_world=0x7f09000f;
-        public static final int invalid_login=0x7f090018;
-        public static final int login=0x7f090017;
-        public static final int name=0x7f09001b;
-        public static final int new_account=0x7f09001a;
-        public static final int password=0x7f090016;
-        public static final int register=0x7f090019;
-        public static final int select=0x7f090011;
-        public static final int title_activity_login=0x7f090014;
-        public static final int unselect=0x7f090010;
-        public static final int upload=0x7f09001c;
-        public static final int username=0x7f090015;
+        public static final int camera=0x7f090014;
+        public static final int hello_world=0x7f090010;
+        public static final int invalid_login=0x7f090019;
+        public static final int login=0x7f090018;
+        public static final int name=0x7f09001c;
+        public static final int new_account=0x7f09001b;
+        public static final int password=0x7f090017;
+        public static final int register=0x7f09001a;
+        public static final int select=0x7f090012;
+        public static final int title_activity_login=0x7f090015;
+        public static final int unselect=0x7f090011;
+        public static final int upload=0x7f09001d;
+        public static final int username=0x7f090016;
     }
     public static final class style {
         public static final int ActionBar_Solid_Felina=0x7f0a005b;

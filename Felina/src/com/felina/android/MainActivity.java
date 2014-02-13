@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,9 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
 	
@@ -70,8 +74,16 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
     }
     
-    
-
+    private void logout() {
+    	SharedPreferences prefs = getSharedPreferences(HttpRequestClient.PREFERENCE_NAME, MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(HttpRequestClient.INPUT_USERNAME, "");
+		editor.putString(HttpRequestClient.INPUT_PASSWORD, "");
+		editor.commit();
+        Intent loginIntent = new Intent(this, LoginActivity.class);
+        startActivity(loginIntent, null);
+        finish();
+    }
 	
 	private void addToGallery(final String mImagePath) {
 //		System.out.println("ok");
@@ -90,7 +102,25 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 		});		
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		if(item.getItemId()==R.id.action_logout){
+			logout();
+			return true;
+		}
+		else {
+			return super.onOptionsItemSelected(item);
+	
+		}
+	}
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

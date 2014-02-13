@@ -3,6 +3,7 @@
 
     <string name="app_name">Felina</string>
     <string name="action_settings">Settings</string>
+    <string name="action_logout">Logout</string>
     <string name="hello_world">Hello world!</string>
     <string name="unselect">Unselect all</string>
     <string name="select">Select all</string>
