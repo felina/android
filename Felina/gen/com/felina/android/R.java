@@ -686,11 +686,13 @@ containing a value of this type.
         public static final int abs__bright_foreground_disabled_holo_light=0x7f060005;
         public static final int abs__bright_foreground_holo_dark=0x7f060002;
         public static final int abs__bright_foreground_holo_light=0x7f060003;
-        public static final int abs__primary_text_disable_only_holo_dark=0x7f060007;
-        public static final int abs__primary_text_disable_only_holo_light=0x7f060008;
-        public static final int abs__primary_text_holo_dark=0x7f060009;
-        public static final int abs__primary_text_holo_light=0x7f06000a;
+        public static final int abs__primary_text_disable_only_holo_dark=0x7f060009;
+        public static final int abs__primary_text_disable_only_holo_light=0x7f06000a;
+        public static final int abs__primary_text_holo_dark=0x7f06000b;
+        public static final int abs__primary_text_holo_light=0x7f06000c;
+        public static final int dark_blue_login=0x7f060008;
         public static final int gray_button_bar=0x7f060006;
+        public static final int light_blue_login=0x7f060007;
     }
     public static final class dimen {
         /**  Default height of an action bar. 
@@ -801,6 +803,7 @@ containing a value of this type.
         public static final int gallery_image_height=0x7f070013;
         public static final int gallery_image_width=0x7f070014;
         public static final int gallery_spacing=0x7f070015;
+        public static final int login_edit_spacing=0x7f070017;
         public static final int login_logo_height=0x7f070011;
         public static final int login_logo_width=0x7f070012;
     }
@@ -938,20 +941,21 @@ containing a value of this type.
         public static final int progress_horizontal_felina=0x7f020082;
         public static final int progress_primary_felina=0x7f020083;
         public static final int progress_secondary_felina=0x7f020084;
-        public static final int selectable_background_felina=0x7f020085;
-        public static final int shutter=0x7f020086;
-        public static final int spinner_ab_default_felina=0x7f020087;
-        public static final int spinner_ab_disabled_felina=0x7f020088;
-        public static final int spinner_ab_focused_felina=0x7f020089;
-        public static final int spinner_ab_pressed_felina=0x7f02008a;
-        public static final int spinner_background_ab_felina=0x7f02008b;
-        public static final int tab_indicator_ab_felina=0x7f02008c;
-        public static final int tab_selected_felina=0x7f02008d;
-        public static final int tab_selected_focused_felina=0x7f02008e;
-        public static final int tab_selected_pressed_felina=0x7f02008f;
-        public static final int tab_unselected_felina=0x7f020090;
-        public static final int tab_unselected_focused_felina=0x7f020091;
-        public static final int tab_unselected_pressed_felina=0x7f020092;
+        public static final int rounded_corners=0x7f020085;
+        public static final int selectable_background_felina=0x7f020086;
+        public static final int shutter=0x7f020087;
+        public static final int spinner_ab_default_felina=0x7f020088;
+        public static final int spinner_ab_disabled_felina=0x7f020089;
+        public static final int spinner_ab_focused_felina=0x7f02008a;
+        public static final int spinner_ab_pressed_felina=0x7f02008b;
+        public static final int spinner_background_ab_felina=0x7f02008c;
+        public static final int tab_indicator_ab_felina=0x7f02008d;
+        public static final int tab_selected_felina=0x7f02008e;
+        public static final int tab_selected_focused_felina=0x7f02008f;
+        public static final int tab_selected_pressed_felina=0x7f020090;
+        public static final int tab_unselected_felina=0x7f020091;
+        public static final int tab_unselected_focused_felina=0x7f020092;
+        public static final int tab_unselected_pressed_felina=0x7f020093;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f040020;

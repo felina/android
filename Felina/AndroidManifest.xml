@@ -33,6 +33,7 @@
         </activity>
         <activity
             android:name="com.felina.android.LoginActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:label="@string/title_activity_login" >
         </activity>
         <service 

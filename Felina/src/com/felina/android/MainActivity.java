@@ -1,17 +1,12 @@
 package com.felina.android;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -32,7 +27,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 	private static final int REQUEST_IMAGE_CAPTURE = 1002;
 	private SectionAdapter mAdapter;
 	private ViewPager mViewPager;
-	private HttpRequestClient mClient ;
+	private HttpRequestClient mClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
