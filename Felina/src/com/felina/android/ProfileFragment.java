@@ -16,7 +16,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class ProfileFragment extends SherlockFragment {
 	
 	ListView list;
-	Bitmap bitmap;
+	
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,10 +26,10 @@ public class ProfileFragment extends SherlockFragment {
 		list = (ListView) rootView.findViewById(R.id.imageList);
 		list.setAdapter(mImageAdapter);
 		HttpRequestClient mClient = new HttpRequestClient(getActivity());
-		bitmap = mClient.getImages();
+		 mClient.getImageList();
 		return rootView;
 	}
-	
+
 	public class ImageAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		
@@ -44,20 +44,19 @@ public class ProfileFragment extends SherlockFragment {
 
 		@Override
 		public Object getItem(int i) {
-			return null;
+			return i;
 		}
 
 		@Override
 		public long getItemId(int i) {
-			// TODO Auto-generated method stub
-			return 0;
+			return i;
 		}
 
 		@Override
 		public View getView(int i, View view, ViewGroup container) {
 			view = mInflater.inflate(R.layout.list_item, container, false);
 			ImageView image = (ImageView) view.findViewById(R.id.listImage);
-			image.setImageBitmap(bitmap);
+//			image.setImageBitmap();
 			return view;
 		}
 		

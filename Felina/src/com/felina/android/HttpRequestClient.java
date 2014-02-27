@@ -55,24 +55,18 @@ public class HttpRequestClient {
 		context = c;
 	}		
 
-	public Boolean execute(final HttpRequest req) {
+	public JSONObject execute(final HttpRequest req) {
 		ExecutorService ex = Executors.newSingleThreadExecutor();
 
-		Callable<Boolean> callable = new Callable<Boolean>() {
+		Callable<JSONObject> callable = new Callable<JSONObject>() {
 			
 			@Override
-			public Boolean call() throws Exception {
+			public JSONObject call() throws Exception {
 				// TODO Auto-generated method stub
-				Boolean res = false;
+				JSONObject res = null;
 				try {
 				    HttpResponse response = mClient.execute(httpHost, req);
-				    JSONObject json = getJSON(response);
-				    try {
-						res = json.getBoolean("res");
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}				    
+				    res = getJSON(response);				    
 				    //Log.d("Http Response:",  mClient.getCookieStore().getCookies().toString());
 				} catch (ClientProtocolException e) {
 				    // writing exception to log
@@ -86,10 +80,10 @@ public class HttpRequestClient {
 			}
 		};
 		
-	    Future<Boolean> future = ex.submit(callable);
-	    Boolean b = false;
+	    Future<JSONObject> future = ex.submit(callable);
+	    JSONObject res = null;
 		try {
-			b = future.get();
+			res = future.get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -99,7 +93,7 @@ public class HttpRequestClient {
 		}
 	    ex.shutdown();
 	    
-	    return b;
+	    return res;
 	}
 	
 	public Boolean executeUpload(final HttpRequest req) {
@@ -123,7 +117,7 @@ public class HttpRequestClient {
 //					} catch (JSONException e) {
 //						// TODO Auto-generated catch block
 //						e.printStackTrace();
-//					}				    
+//					}
 				    //Log.d("Http Response:",  mClient.getCookieStore().getCookies().toString());
 				} catch (ClientProtocolException e) {
 				    // writing exception to log
@@ -155,8 +149,16 @@ public class HttpRequestClient {
 
 	public Boolean loginCheck() {
 		HttpGet httpLoginCheck = new HttpGet("/logincheck");
+		JSONObject res = execute(httpLoginCheck);
 		Boolean b = false;
-		if(!execute(httpLoginCheck)) {
+		try {
+			if(res!= null)
+			b = res.getBoolean("res");
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if(!b) {
 			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Activity.MODE_PRIVATE);
 			String username = prefs.getString(INPUT_USERNAME, null);
 			String password = prefs.getString(INPUT_PASSWORD, null);
@@ -175,13 +177,69 @@ public class HttpRequestClient {
 			    e.printStackTrace();
 			}
 			
-		    b = execute(httpLogin);
+		    res = execute(httpLogin);
+		    try {
+				b = res.getBoolean("res");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return b;
 	}
 	
-	public Bitmap getImages() {
+	public Boolean login(String username, String password) {
+		ArrayList<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
+		nameValuePair.add(new BasicNameValuePair("email", username));
+	    nameValuePair.add(new BasicNameValuePair("pass", password));
+	    
+	    HttpPost httpLogin = new HttpPost("/login");
+		
+	    try {
+		    httpLogin.setEntity(new UrlEncodedFormEntity(nameValuePair));
+		} catch (UnsupportedEncodingException e) {
+		    // writing error to Log
+		    e.printStackTrace();
+		}
+		
+	    JSONObject res = execute(httpLogin);
+	    Boolean b = false;
+	    try {
+			b = res.getBoolean("res");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    return b;
+	}
+	
+	public Boolean register(String name, String username, String password) {
+		ArrayList<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(3);
+		nameValuePair.add(new BasicNameValuePair("name", name));
+		nameValuePair.add(new BasicNameValuePair("email", username));
+	    nameValuePair.add(new BasicNameValuePair("pass", password));
+	    HttpPost httpRegister = new HttpPost("/register");
+	    
+	    try {
+		    httpRegister.setEntity(new UrlEncodedFormEntity(nameValuePair));
+		} catch (UnsupportedEncodingException e) {
+		    // writing error to Log
+		    e.printStackTrace();
+		}
+	    
+	    JSONObject res = execute(httpRegister);
+	    Boolean b = false;
+	    try {
+			b = res.getBoolean("res");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    return b;
+	}
+	
+	public Bitmap getImageList() {
 		final HttpGet httpGetImages = new HttpGet("/images");
 		loginCheck();
 		ExecutorService ex = Executors.newSingleThreadExecutor();
@@ -235,6 +293,7 @@ public class HttpRequestClient {
 	    
 		return bitmap;
 	}
+	
 	private static JSONObject getJSON(HttpResponse response) {
 		 
 		JSONTokener tokener = null;

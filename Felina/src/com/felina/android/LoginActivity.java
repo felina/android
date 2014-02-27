@@ -54,20 +54,7 @@ public class LoginActivity extends Activity {
 					
 					dialog.show();
 					
-					nameValuePair = new ArrayList<NameValuePair>(2);
-					nameValuePair.add(new BasicNameValuePair("email", username));
-				    nameValuePair.add(new BasicNameValuePair("pass", password));
-				    
-				    HttpPost httpLogin = new HttpPost("/login");
-					
-				    try {
-					    httpLogin.setEntity(new UrlEncodedFormEntity(nameValuePair));
-					} catch (UnsupportedEncodingException e) {
-					    // writing error to Log
-					    e.printStackTrace();
-					}
-					
-				    Boolean b = mClient.execute(httpLogin) ;
+				    Boolean b = mClient.login(username, password);
 					
 				    dialog.dismiss();
 					
@@ -85,20 +72,7 @@ public class LoginActivity extends Activity {
 					
 					dialog.show();
 					
-					nameValuePair = new ArrayList<NameValuePair>(3);
-					nameValuePair.add(new BasicNameValuePair("name", name));
-					nameValuePair.add(new BasicNameValuePair("email", username));
-				    nameValuePair.add(new BasicNameValuePair("pass", password));
-				    HttpPost httpRegister = new HttpPost("/register");
-				    
-				    try {
-					    httpRegister.setEntity(new UrlEncodedFormEntity(nameValuePair));
-					} catch (UnsupportedEncodingException e) {
-					    // writing error to Log
-					    e.printStackTrace();
-					}
-					
-				    Boolean b = mClient.execute(httpRegister) ;
+				    Boolean b = mClient.register(name, username, password) ;
 					
 				    dialog.dismiss();
 				    
