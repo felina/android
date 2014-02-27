@@ -998,8 +998,8 @@ containing a value of this type.
         public static final int abs__textButton=0x7f040013;
         public static final int abs__title=0x7f04001b;
         public static final int abs__up=0x7f04000b;
-        public static final int action_logout=0x7f040041;
-        public static final int action_settings=0x7f040040;
+        public static final int action_logout=0x7f040043;
+        public static final int action_settings=0x7f040042;
         public static final int buttonLayout=0x7f040039;
         public static final int cameraBtn=0x7f04003a;
         public static final int checkBox=0x7f04003f;
@@ -1008,7 +1008,9 @@ containing a value of this type.
         public static final int errorTxt=0x7f040032;
         public static final int homeAsUp=0x7f040006;
         public static final int imageGrid=0x7f04003d;
+        public static final int imageList=0x7f040041;
         public static final int imageThumb=0x7f04003e;
+        public static final int listImage=0x7f040040;
         public static final int listMode=0x7f040002;
         public static final int loginBtn=0x7f040036;
         public static final int nameBox=0x7f040033;
@@ -1056,8 +1058,10 @@ containing a value of this type.
         public static final int dummy_fragment=0x7f030017;
         public static final int gallery_fragment=0x7f030018;
         public static final int gallery_item=0x7f030019;
-        public static final int sherlock_spinner_dropdown_item=0x7f03001a;
-        public static final int sherlock_spinner_item=0x7f03001b;
+        public static final int list_item=0x7f03001a;
+        public static final int profile_fragment=0x7f03001b;
+        public static final int sherlock_spinner_dropdown_item=0x7f03001c;
+        public static final int sherlock_spinner_item=0x7f03001d;
     }
     public static final class menu {
         public static final int login=0x7f0b0000;

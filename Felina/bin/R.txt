@@ -327,8 +327,8 @@ int id abs__submit_area 0x7f04002f
 int id abs__textButton 0x7f040013
 int id abs__title 0x7f04001b
 int id abs__up 0x7f04000b
-int id action_logout 0x7f040041
-int id action_settings 0x7f040040
+int id action_logout 0x7f040043
+int id action_settings 0x7f040042
 int id buttonLayout 0x7f040039
 int id cameraBtn 0x7f04003a
 int id checkBox 0x7f04003f
@@ -337,7 +337,9 @@ int id edit_query 0x7f040026
 int id errorTxt 0x7f040032
 int id homeAsUp 0x7f040006
 int id imageGrid 0x7f04003d
+int id imageList 0x7f040041
 int id imageThumb 0x7f04003e
+int id listImage 0x7f040040
 int id listMode 0x7f040002
 int id loginBtn 0x7f040036
 int id nameBox 0x7f040033
@@ -381,8 +383,10 @@ int layout activity_main 0x7f030016
 int layout dummy_fragment 0x7f030017
 int layout gallery_fragment 0x7f030018
 int layout gallery_item 0x7f030019
-int layout sherlock_spinner_dropdown_item 0x7f03001a
-int layout sherlock_spinner_item 0x7f03001b
+int layout list_item 0x7f03001a
+int layout profile_fragment 0x7f03001b
+int layout sherlock_spinner_dropdown_item 0x7f03001c
+int layout sherlock_spinner_item 0x7f03001d
 int menu login 0x7f0b0000
 int menu main 0x7f0b0001
 int string ContentDescription 0x7f090013

@@ -1,6 +1,7 @@
 package com.felina.android;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -32,6 +33,8 @@ import org.json.JSONTokener;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 public class HttpRequestClient {
@@ -47,29 +50,23 @@ public class HttpRequestClient {
 		HttpParams params = new BasicHttpParams();
 	    params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 		mClient = new DefaultHttpClient(params);
+//		httpHost = new HttpHost("nl.ks07.co.uk", 5000);
 		httpHost = new HttpHost("ec2-54-194-186-121.eu-west-1.compute.amazonaws.com");
 		context = c;
-//		httpHost = new HttpHost("nl.ks07.co.uk", 5000);
 	}		
-		
-	public Boolean execute(final HttpRequest req) {
+
+	public JSONObject execute(final HttpRequest req) {
 		ExecutorService ex = Executors.newSingleThreadExecutor();
 
-		Callable<Boolean> callable = new Callable<Boolean>() {
+		Callable<JSONObject> callable = new Callable<JSONObject>() {
 			
 			@Override
-			public Boolean call() throws Exception {
+			public JSONObject call() throws Exception {
 				// TODO Auto-generated method stub
-				Boolean res = false;
+				JSONObject res = null;
 				try {
 				    HttpResponse response = mClient.execute(httpHost, req);
-				    JSONObject json = getJSON(response);
-				    try {
-						res = json.getBoolean("res");
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}				    
+				    res = getJSON(response);				    
 				    //Log.d("Http Response:",  mClient.getCookieStore().getCookies().toString());
 				} catch (ClientProtocolException e) {
 				    // writing exception to log
@@ -83,10 +80,10 @@ public class HttpRequestClient {
 			}
 		};
 		
-	    Future<Boolean> future = ex.submit(callable);
-	    Boolean b = false;
+	    Future<JSONObject> future = ex.submit(callable);
+	    JSONObject res = null;
 		try {
-			b = future.get();
+			res = future.get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -96,7 +93,7 @@ public class HttpRequestClient {
 		}
 	    ex.shutdown();
 	    
-	    return b;
+	    return res;
 	}
 	
 	public Boolean executeUpload(final HttpRequest req) {
@@ -120,7 +117,7 @@ public class HttpRequestClient {
 //					} catch (JSONException e) {
 //						// TODO Auto-generated catch block
 //						e.printStackTrace();
-//					}				    
+//					}
 				    //Log.d("Http Response:",  mClient.getCookieStore().getCookies().toString());
 				} catch (ClientProtocolException e) {
 				    // writing exception to log
@@ -152,8 +149,16 @@ public class HttpRequestClient {
 
 	public Boolean loginCheck() {
 		HttpGet httpLoginCheck = new HttpGet("/logincheck");
+		JSONObject res = execute(httpLoginCheck);
 		Boolean b = false;
-		if(!execute(httpLoginCheck)) {
+		try {
+			if(res!= null)
+			b = res.getBoolean("res");
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if(!b) {
 			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Activity.MODE_PRIVATE);
 			String username = prefs.getString(INPUT_USERNAME, null);
 			String password = prefs.getString(INPUT_PASSWORD, null);
@@ -172,10 +177,121 @@ public class HttpRequestClient {
 			    e.printStackTrace();
 			}
 			
-		    b = execute(httpLogin);
+		    res = execute(httpLogin);
+		    try {
+				b = res.getBoolean("res");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return b;
+	}
+	
+	public Boolean login(String username, String password) {
+		ArrayList<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
+		nameValuePair.add(new BasicNameValuePair("email", username));
+	    nameValuePair.add(new BasicNameValuePair("pass", password));
+	    
+	    HttpPost httpLogin = new HttpPost("/login");
+		
+	    try {
+		    httpLogin.setEntity(new UrlEncodedFormEntity(nameValuePair));
+		} catch (UnsupportedEncodingException e) {
+		    // writing error to Log
+		    e.printStackTrace();
+		}
+		
+	    JSONObject res = execute(httpLogin);
+	    Boolean b = false;
+	    try {
+			b = res.getBoolean("res");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    return b;
+	}
+	
+	public Boolean register(String name, String username, String password) {
+		ArrayList<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(3);
+		nameValuePair.add(new BasicNameValuePair("name", name));
+		nameValuePair.add(new BasicNameValuePair("email", username));
+	    nameValuePair.add(new BasicNameValuePair("pass", password));
+	    HttpPost httpRegister = new HttpPost("/register");
+	    
+	    try {
+		    httpRegister.setEntity(new UrlEncodedFormEntity(nameValuePair));
+		} catch (UnsupportedEncodingException e) {
+		    // writing error to Log
+		    e.printStackTrace();
+		}
+	    
+	    JSONObject res = execute(httpRegister);
+	    Boolean b = false;
+	    try {
+			b = res.getBoolean("res");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    return b;
+	}
+	
+	public Bitmap getImageList() {
+		final HttpGet httpGetImages = new HttpGet("/images");
+		loginCheck();
+		ExecutorService ex = Executors.newSingleThreadExecutor();
+
+		Callable<Bitmap> callable = new Callable<Bitmap>() {
+			
+			@Override
+			public Bitmap call() throws Exception {
+				// TODO Auto-generated method stub
+				Boolean res = false;
+				Bitmap bitmap = null;
+				try {
+				    HttpResponse response = mClient.execute(httpHost, httpGetImages);
+				    JSONObject json = getJSON(response);
+				    try {
+						res = json.getBoolean("res");
+						String id = json.getJSONArray("images").getJSONObject(0).getString("imageid");
+						System.out.println(id);
+						HttpGet get = new HttpGet("/img/"+id);
+						response = mClient.execute(httpHost, get);
+						bitmap = BitmapFactory.decodeStream((InputStream) response.getEntity().getContent());
+				    } catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}				    
+				    //Log.d("Http Response:",  mClient.getCookieStore().getCookies().toString());
+				} catch (ClientProtocolException e) {
+				    // writing exception to log
+				    e.printStackTrace();
+				} catch (IOException e) {
+				    // writing exception to log
+				    e.printStackTrace();
+				}
+				
+				return bitmap;
+			}
+		};
+		
+	    Future<Bitmap> future = ex.submit(callable);
+	    Bitmap bitmap = null;
+		try {
+			bitmap = future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    ex.shutdown();
+	    
+		return bitmap;
 	}
 	
 	private static JSONObject getJSON(HttpResponse response) {
@@ -185,6 +301,7 @@ public class HttpRequestClient {
 		String s="";
 		try {
 			s = EntityUtils.toString(response.getEntity());
+			System.out.println("JSON: : " + s);
 			tokener = new JSONTokener(s);
 			json = new JSONObject(tokener);
 		} catch (IllegalStateException e) {

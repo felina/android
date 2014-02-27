@@ -189,6 +189,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 			
 			case 0: return new GalleryFragment(); 
 			
+			case 2: return new ProfileFragment();
+			
 			default: return new DummyFragment();
 			}
 		}
