@@ -114,17 +114,17 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 				
 				if (f != null) {
 					intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-					getActivity().startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+					getActivity().startActivityForResult(intent, REQUEST_IMAGE_CAPTURE); 
 				}
 			}
 		}
 	   
-
+	// Creates image file to be used when taking a picture through the app
 	private File createFile() throws IOException {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 		File image = new File(dir, timeStamp+".jpg");
-		mImagePath = "file: " + image.getAbsolutePath();
+		mImagePath = image.getAbsolutePath();
 		return image;
 	}
 
