@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
 	
-    <ImageView 
+<!--     <ImageView 
         android:id="@+id/listImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/ContentDescription"/>
+        android:contentDescription="@string/ContentDescription"/> -->
+    <ImageView
+        android:id="@+id/listImage"
+        android:layout_width="72dip"
+        android:layout_height="72dip"
+        android:layout_margin="3dip"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
 
 </LinearLayout>

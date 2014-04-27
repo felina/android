@@ -389,6 +389,7 @@ int layout sherlock_spinner_dropdown_item 0x7f03001c
 int layout sherlock_spinner_item 0x7f03001d
 int menu login 0x7f0b0000
 int menu main 0x7f0b0001
+int menu product 0x7f0b0002
 int string ContentDescription 0x7f090013
 int string abs__action_bar_home_description 0x7f090000
 int string abs__action_bar_up_description 0x7f090001

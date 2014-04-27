@@ -32,7 +32,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 	private SectionAdapter mAdapter;
 	private ViewPager mViewPager;
 	private HttpRequestClient mClient;
-
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -159,26 +159,21 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 	@Override
 	public void onTabSelected(Tab tab,
 			android.support.v4.app.FragmentTransaction ft) {
-		// TODO Auto-generated method stub
 		mViewPager.setCurrentItem(tab.getPosition());
 	}
 
 	@Override
 	public void onTabUnselected(Tab tab,
 			android.support.v4.app.FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onTabReselected(Tab tab,
-			android.support.v4.app.FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-		
+			android.support.v4.app.FragmentTransaction ft) {		
 	}
 	
 	public static class SectionAdapter extends FragmentStatePagerAdapter {
-			
+				
 		public SectionAdapter(FragmentManager fm) {
 			super(fm);
 		}
@@ -189,10 +184,10 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 			
 			case 0: return new GalleryFragment(); 
 			
-			case 2: return new ProfileFragment();
+//			case 2: return new ProfileFragment();
 			
 			default: return new DummyFragment();
-			}
+ 			}
 		}
 		
 		@Override

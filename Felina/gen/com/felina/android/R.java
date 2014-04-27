@@ -1066,6 +1066,7 @@ containing a value of this type.
     public static final class menu {
         public static final int login=0x7f0b0000;
         public static final int main=0x7f0b0001;
+        public static final int product=0x7f0b0002;
     }
     public static final class string {
         public static final int ContentDescription=0x7f090013;

@@ -31,6 +31,11 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 
 public class GalleryFragment extends SherlockFragment implements LoaderManager.LoaderCallbacks<Cursor>  {
 	
@@ -52,6 +57,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	private ImageView cameraBtn;
 	private Button selectBtn;
 	public static String mImagePath;
+	private DisplayImageOptions options;
 	
 	private OnClickListener mBtnListener = new View.OnClickListener() {
 		
@@ -93,6 +99,15 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 		
 		selectedCount = 0;
 		
+		options = new DisplayImageOptions.Builder()
+		.showImageOnFail(R.drawable.ic_launcher)
+		.showImageOnLoading(R.drawable.ic_menu_camera)
+		.cacheInMemory(true)
+		.cacheOnDisc(true)
+		.considerExifParams(true)
+		.displayer(new SimpleBitmapDisplayer())
+		.build();
+		
 		mAdapter = new GalleryAdapter();
 		gallery.setAdapter(mAdapter);
 				
@@ -124,7 +139,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 		File image = new File(dir, timeStamp+".jpg");
-		mImagePath = "file: " + image.getAbsolutePath();
+		mImagePath = image.getAbsolutePath();
 		return image;
 	}
 
@@ -257,6 +272,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 			checkBox = (CheckBox) view.findViewById(R.id.checkBox);
 			
 			imageView.setImageBitmap(thumbnails[i]);
+//			ImageLoader.getInstance().displayImage(Uri.fromFile(new File(paths[i])).toString(), imageView, options);
 			imageView.setOnClickListener(mListener);
 			imageView.setId(i);
 			imageView.setTag(IMAGE);
