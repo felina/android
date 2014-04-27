@@ -20,10 +20,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-
 
 public class ProfileFragment extends SherlockFragment {
 
@@ -36,8 +32,7 @@ public class ProfileFragment extends SherlockFragment {
 	private ArrayList<String> idList;
 	private int lastVisibleItem;
 	private String host = "http://ec2-54-194-186-121.eu-west-1.compute.amazonaws.com/img/";
-	private ImageLoader mImageLoader = ImageLoader.getInstance();
-	private DisplayImageOptions options;
+	
 
 	private OnScrollListener mScrollListener = new OnScrollListener() {
 		
@@ -103,15 +98,6 @@ public class ProfileFragment extends SherlockFragment {
 		list = (ListView) rootView.findViewById(R.id.imageList);
 		list.setAdapter(mImageAdapter);
 //		list.setOnScrollListener(mScrollListener);
-		options = new DisplayImageOptions.Builder()
-		.showImageOnFail(R.drawable.ic_launcher)
-		.showImageOnLoading(R.drawable.ic_menu_camera)
-		.cacheInMemory(true)
-		.cacheOnDisc(true)
-		.considerExifParams(true)
-		.displayer(new RoundedBitmapDisplayer(20))
-		.build();
-		
 		return rootView;
 	}
 
@@ -229,9 +215,6 @@ public class ProfileFragment extends SherlockFragment {
 			}
 
 //			holder.text.setText("Item " + (position + 1));
-
-			mImageLoader.displayImage(idList.get(position), holder.image, options);
-
 			return view;
 		}
 	}

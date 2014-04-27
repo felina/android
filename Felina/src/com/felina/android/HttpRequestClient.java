@@ -55,7 +55,7 @@ public class HttpRequestClient {
 	    params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 		mClient = new DefaultHttpClient(params);
 		httpHost = new HttpHost("nl.ks07.co.uk", 5000);
-//		httpHost = new HttpHost("ec2-54-194-186-121.eu-west-1.compute.amazonaws.com");
+		httpHost = new HttpHost("ec2-54-194-186-121.eu-west-1.compute.amazonaws.com");
 		context = c;
 	}		
 

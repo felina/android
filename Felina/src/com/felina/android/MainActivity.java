@@ -2,7 +2,11 @@ package com.felina.android;
 
 import java.io.File;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaScannerConnection;
@@ -24,30 +28,73 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.felina.android.api.FelinaClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
 	
-	private static final int REQUEST_LOGIN = 1001;
-	private static final int REQUEST_IMAGE_CAPTURE = 1002;
 	private SectionAdapter mAdapter;
 	private ViewPager mViewPager;
 	private HttpRequestClient mClient;
+	private static FelinaClient fClient;
+	private static String EMAIL;
+	private static String PASS;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        mClient = new HttpRequestClient(this);
-        //Create the adapter to fragments for the app sections.
-        mAdapter = new SectionAdapter(getSupportFragmentManager());
-
-        if(!mClient.loginCheck()) {
-            Intent loginIntent = new Intent(this, LoginActivity.class);
-            startActivityForResult(loginIntent, REQUEST_LOGIN);	
+        if(fClient == null) {
+        	fClient = new FelinaClient(this);
         }
         
-        // get the action bar. 
+//        mClient = new HttpRequestClient(this);
+        //Create the adapter to fragments for the app sections.
+
+//        if(!mClient.loginCheck()) {
+//            Intent loginIntent = new Intent(this, LoginActivity.class);
+//            startActivityForResult(loginIntent, REQUEST_LOGIN);	
+//        }
+        
+        EMAIL = CredentialUtils.readEmail(this);
+        PASS = CredentialUtils.readPassword(this);
+        
+       login(this, EMAIL, PASS, Constants.RETRY_LIMIT); 
+       
+
+    }
+    
+    private void login(final Context context, final String email, final String pass, final int retry) {
+    	
+    	if(retry == 0) {
+    		return;
+    	}
+    	
+    	fClient.login(email, pass, new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONObject response) {
+				try {
+					if (response.getBoolean("res")) {
+						setup();
+					} else {
+			            Intent loginIntent = new Intent(context, LoginActivity.class);
+			            startActivityForResult(loginIntent, Constants.REQUEST_LOGIN);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+					login(context, email, pass, retry-1);
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable e, JSONObject errorResponse) {
+				login(context, email, pass, retry-1);
+			}
+		});
+    }
+    
+    private void setup() {
         final ActionBar actionBar = getSupportActionBar();
         
         actionBar.setHomeButtonEnabled(false);
@@ -62,8 +109,10 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         		actionBar.setSelectedNavigationItem(position);
         	}
         });
-    
-       for (int i = 0; i < mAdapter.getCount(); i++) {
+
+        mAdapter = new SectionAdapter(getSupportFragmentManager());
+
+        for (int i = 0; i < mAdapter.getCount(); i++) {
     	   actionBar.addTab(
     			   actionBar.newTab()
     			   			.setText(mAdapter.getPageTitle(i))
@@ -71,7 +120,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
        }
        
 		mViewPager.setCurrentItem(1);
-
     }
     
     private void logout() {
@@ -125,7 +173,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	Log.d("MainActivityFelina","something happened");
-    	if(requestCode == REQUEST_LOGIN) {
+    	if(requestCode == Constants.REQUEST_LOGIN) {
         	Log.d("MainActivityFelina","login");
     		switch(resultCode) {
     		
@@ -137,7 +185,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     			break;
     		}
     	}
-    	else if ( requestCode == REQUEST_IMAGE_CAPTURE ) {
+    	else if ( requestCode == Constants.REQUEST_IMAGE_CAPTURE ) {
         	Log.d("MainActivityFelina", resultCode+" "+RESULT_CANCELED+" "+RESULT_OK+" "+RESULT_FIRST_USER);
     		if( resultCode == Activity.RESULT_OK ) {
 				System.out.println("allgood");
