@@ -1,8 +1,11 @@
 package com.felina.android;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -10,6 +13,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.felina.android.api.FelinaClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 public class LoginActivity extends Activity {
 
@@ -23,7 +29,7 @@ public class LoginActivity extends Activity {
 	private String login;
 	private String register;
 	private String new_account;
- 	private HttpRequestClient mClient;
+ 	private static FelinaClient fClient;
 
 	private OnClickListener mListener = new View.OnClickListener() {
 		@Override
@@ -35,43 +41,19 @@ public class LoginActivity extends Activity {
 			
 			case R.id.loginBtn:
 
-				String username = userBox.getText().toString();
-				String password = passBox.getText().toString();
+				String email = userBox.getText().toString();
+				String pass = passBox.getText().toString();
 				String name = nameBox.getText().toString();
 				text = loginBtn.getText().toString();
 
 				if(text.equals(login)) {
-					
 					dialog.show();
-					
-				    Boolean b = mClient.login(username, password);
-					
-				    dialog.dismiss();
-					
-				    if(b){
-				    	savePrefs(username, password);
-						setResult(RESULT_OK);
-						finish();
-					}
-					else {
-						errTxt.setVisibility(View.VISIBLE);
-					}
+				    login(getApplicationContext(), email, pass, Constants.RETRY_LIMIT);
 				}
 				
 				else if (text.equals(register)) {
-					
 					dialog.show();
-					
-				    Boolean b = mClient.register(name, username, password) ;
-					
-				    dialog.dismiss();
-				    
-				    if(b){
-				    	savePrefs(username, password);
-						setResult(RESULT_OK);
-						finish();
-					}
-				    
+				    register(getApplicationContext(), email, pass, name, Constants.RETRY_LIMIT);
 				}
 					
 				break;
@@ -103,7 +85,7 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		
-		mClient = new HttpRequestClient(this);
+		fClient = new FelinaClient(this);
 		
 		userBox = (EditText) findViewById(R.id.usernameBox);
 		passBox = (EditText) findViewById(R.id.passwordBox);
@@ -125,6 +107,72 @@ public class LoginActivity extends Activity {
 		registerBtn.setOnClickListener(mListener);
 	}
 	
+    private void login(final Context context, final String email, final String pass, final int retry) {
+    	
+    	if(retry == 0) {
+    		return;
+    	}
+    	
+    	fClient.login(email, pass, new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONObject response) {
+				dialog.dismiss();
+				try {
+					if (response.getBoolean("res")) {
+				    	CredentialUtils.writeEmail(context, email);
+				    	CredentialUtils.writePassword(context, pass);
+				    	CredentialUtils.writeName(context, response.getJSONObject("user").getString("name"));
+						setResult(RESULT_OK);
+						finish();
+					} else {
+						errTxt.setVisibility(View.VISIBLE);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+					login(context, email, pass, retry-1);
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable e, JSONObject errorResponse) {
+				login(context, email, pass, retry-1);
+			}
+		});
+    }
+    
+    private void register(final Context context, final String email, final String pass, final String name, final int retry) {
+    	
+    	if(retry == 0) {
+    		return;
+    	}
+    	
+    	fClient.register(email, pass, name, new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONObject response) {
+				dialog.dismiss();
+				try {
+					if (response.getBoolean("res")) {
+				    	CredentialUtils.writeEmail(context, email);
+				    	CredentialUtils.writePassword(context, pass);
+				    	CredentialUtils.writeName(context, name);
+						setResult(RESULT_OK);
+						finish();
+					} else {
+						errTxt.setVisibility(View.VISIBLE);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+					login(context, email, pass, retry-1);
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable e, JSONObject errorResponse) {
+				login(context, email, pass, retry-1);
+			}
+		});
+    }
+	
 	@Override
 	public void onBackPressed() {
 		setResult(RESULT_CANCELED);
@@ -136,17 +184,6 @@ public class LoginActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.login, menu);
 		return true;
-	}
-	
-	private void savePrefs(String username, String password) {
-		System.out.println("Save prefs");
-		SharedPreferences prefs = getSharedPreferences(HttpRequestClient.PREFERENCE_NAME, MODE_PRIVATE);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(HttpRequestClient.INPUT_USERNAME, username);
-		editor.putString(HttpRequestClient.INPUT_PASSWORD, password);
-		editor.commit();
-		
-		System.out.println(prefs.getString("username", null)+"  "+prefs.getString("pass", null));
 	}
 
 }

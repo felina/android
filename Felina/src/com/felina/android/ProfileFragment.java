@@ -1,139 +1,121 @@
 package com.felina.android;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.felina.android.api.FelinaClient;
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 public class ProfileFragment extends SherlockFragment {
 
-	static public int CACHE_SIZE = 40;
-	static public int CACHE_MARGIN = 10;
 	public ListView list;
-	public JSONArray images;
-	private HashMap<String, Bitmap> imageMap;
-	private HttpRequestClient mClient;
 	private ArrayList<String> idList;
-	private int lastVisibleItem;
-	private String host = "http://ec2-54-194-186-121.eu-west-1.compute.amazonaws.com/img/";
-	
-
-	private OnScrollListener mScrollListener = new OnScrollListener() {
-		
-		@Override
-		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			
-		}
-		
-		@Override
-		public void onScroll(AbsListView view, int firstVisibleItem,
-				int visibleItemCount, int totalItemCount) {
-			
-			int size = images.length()-1;
-			int start = (firstVisibleItem - CACHE_MARGIN > 0)? (firstVisibleItem - CACHE_MARGIN) : 0;
-			int stop = (firstVisibleItem + visibleItemCount);
-			stop = (stop + CACHE_MARGIN) < size ? (stop + CACHE_MARGIN) : size;
-			int leftover = CACHE_SIZE - (stop - start);
-
-			if (firstVisibleItem > lastVisibleItem) {
-				//scroll up
-				start = (start - leftover) > 0 ? (start - leftover) : 0;
-				
-				for(int i = stop; i<=start; i--)
-					getImage(i);
-			}
-			else {
-				//scroll down
-				stop = (stop + leftover) < size ? (stop + leftover) : size;
-				for(int i = start; i<=stop; i++)
-					getImage(i);
-			}
-			
-			lastVisibleItem = firstVisibleItem;
-		}
-	}; 
+	private ArrayList<Bitmap> imageList;
+	private static FelinaClient fClient;
+	private ImageAdapter mImageAdapter;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.profile_fragment, container, false);
 
-		mClient = new HttpRequestClient(getActivity());
-		images = mClient.getImageList();
-		
-		imageMap = new HashMap<String, Bitmap>();
-		idList = new ArrayList<String>();
-		
-		for( int i = 0; i<(images.length()>10?10:images.length()); i++) {
-			try {
-				String id = images.getJSONObject(i).getString("imageid");
-				idList.add(host+id);
-//				addToMap(id);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		if(MainActivity.fClient != null) {
+			fClient = MainActivity.fClient;
+		} else {
+			fClient = new FelinaClient(getActivity());
 		}
-
-		ImageAdapter mImageAdapter = new ImageAdapter();
-				
-		lastVisibleItem = 0;
-
+		
+		mImageAdapter = new ImageAdapter();
 		list = (ListView) rootView.findViewById(R.id.imageList);
+		idList = new ArrayList<String>();
+		imageList = new ArrayList<Bitmap>();
 		list.setAdapter(mImageAdapter);
-//		list.setOnScrollListener(mScrollListener);
+		getImageList(Constants.RETRY_LIMIT);				
 		return rootView;
 	}
 
-	public Bitmap addToMap(String id) {
-		System.out.println("Profile Page: Downloading "+id );
-		Bitmap b = mClient.getImage(id);
-		System.out.println("Bitmap is "+((b==null)?"null":"not null"));
-		if(imageMap.size()>=CACHE_SIZE){
-			// prune the top of the list, oldest.
-			imageMap.remove(idList.remove(0));
+	private void getImageList(final int retry) {
+		if(retry==0) {
+			Log.d("ProfileFragment", "failed");
+			return;
 		}
-
-		imageMap.put(id, b);
-		idList.add(id);
-		return b;
+		
+		fClient.getImageList(new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONObject response) {
+				try {
+					if (response.getBoolean("res")) {
+						Log.d("ProfileFragment", "got list");
+						JSONArray images = response.getJSONArray("images");
+						for( int i = 0; i<images.length(); i++) {
+							String id = images.getJSONObject(i).getString("imageid");
+							getImage(getActivity(), id, Constants.RETRY_LIMIT);
+							Log.d("ProfileFragment", id);
+						}
+						Log.d("ProfileFragment", "done images");
+					}
+					else {
+						Log.d("ProfileFragment", "not list");
+						getImageList(retry-1);
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					getImageList(retry-1);
+				}
+ 			}
+			
+			@Override
+			public void onFailure(Throwable e, JSONObject errorResponse) {
+				e.printStackTrace();
+				getImageList(retry-1);
+			}
+			
+		});
 	}
 	
-	public Bitmap getImage(int i) {
-		String id = null;
-		try {
-			id = images.getJSONObject(i).getString("imageid");
+	private void getImage(final Context context, final String id, final int retry) {
+		if(retry == 0) {
+			return;
+		}
+		
+		fClient.getImage(id, new FileAsyncHttpResponseHandler(context){
 			
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if(imageMap.containsKey(id)) {
-			//to add the id to the bottom of the list
-			idList.add(idList.remove(i));
-			return imageMap.get(id);
-		}
-		
-		return addToMap(id);
+			@Override
+			public void onSuccess(File file) {
+				if(file!=null) {
+					imageList.add(BitmapFactory.decodeFile(file.getAbsolutePath()));	
+					mImageAdapter.notifyDataSetChanged();
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable e, File response) {
+				e.printStackTrace();
+				getImage(context, id, retry-1);
+			}
+			
+		});
 	}
-
+	
 //	public class ImageAdapter extends BaseAdapter {
 //		private LayoutInflater mInflater;
 //		
@@ -181,7 +163,7 @@ public class ProfileFragment extends SherlockFragment {
 			mInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 		private class ViewHolder {
-			public TextView text;
+//			public TextView text;
 			public ImageView image;
 		}
 
@@ -213,7 +195,13 @@ public class ProfileFragment extends SherlockFragment {
 			} else {
 				holder = (ViewHolder) view.getTag();
 			}
-
+			if(position < imageList.size()) {
+				if(imageList.get(position)!=null){
+					holder.image.setImageBitmap(imageList.get(position));
+				} else {
+					holder.image.setImageResource(R.drawable.ic_loading_sun);
+				}
+			}
 //			holder.text.setText("Item " + (position + 1));
 			return view;
 		}

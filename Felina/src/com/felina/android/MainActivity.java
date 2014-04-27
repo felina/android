@@ -35,8 +35,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 	
 	private SectionAdapter mAdapter;
 	private ViewPager mViewPager;
-	private HttpRequestClient mClient;
-	private static FelinaClient fClient;
+//	private HttpRequestClient mClient;
+	public static FelinaClient fClient;
 	private static String EMAIL;
 	private static String PASS;
 	
@@ -49,6 +49,9 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         	fClient = new FelinaClient(this);
         }
         
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mAdapter = new SectionAdapter(getSupportFragmentManager());
+
 //        mClient = new HttpRequestClient(this);
         //Create the adapter to fragments for the app sections.
 
@@ -95,13 +98,13 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     }
     
     private void setup() {
+    	Log.d("MainActivityFelina","setup happened");
         final ActionBar actionBar = getSupportActionBar();
         
         actionBar.setHomeButtonEnabled(false);
         
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
-        mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mAdapter);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
         	@Override
@@ -109,8 +112,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         		actionBar.setSelectedNavigationItem(position);
         	}
         });
-
-        mAdapter = new SectionAdapter(getSupportFragmentManager());
 
         for (int i = 0; i < mAdapter.getCount(); i++) {
     	   actionBar.addTab(
@@ -232,7 +233,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 			
 			case 0: return new GalleryFragment(); 
 			
-//			case 2: return new ProfileFragment();
+//			case 1: return new ProfileFragment();
 			
 			default: return new DummyFragment();
  			}
@@ -240,7 +241,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 		
 		@Override
 		public int getCount() {
-			return 3;
+			return 2;
 		}
 		
 		@Override
