@@ -28,6 +28,7 @@ public class ProfileFragment extends SherlockFragment {
 
 	public ListView list;
 	private ArrayList<String> idList;
+	private ArrayList<String> idStack;
 	private ArrayList<Bitmap> imageList;
 	private static FelinaClient fClient;
 	private ImageAdapter mImageAdapter;
@@ -36,7 +37,7 @@ public class ProfileFragment extends SherlockFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.profile_fragment, container, false);
-
+		Log.d("ProfileFragment", "onCreate");
 		if(MainActivity.fClient != null) {
 			fClient = MainActivity.fClient;
 		} else {
@@ -46,6 +47,7 @@ public class ProfileFragment extends SherlockFragment {
 		mImageAdapter = new ImageAdapter();
 		list = (ListView) rootView.findViewById(R.id.imageList);
 		idList = new ArrayList<String>();
+		idStack = new ArrayList<String>();
 		imageList = new ArrayList<Bitmap>();
 		list.setAdapter(mImageAdapter);
 		getImageList(Constants.RETRY_LIMIT);				
@@ -53,6 +55,7 @@ public class ProfileFragment extends SherlockFragment {
 	}
 
 	private void getImageList(final int retry) {
+		Log.d("ProfileFragment", "getImageList "+retry);
 		if(retry==0) {
 			Log.d("ProfileFragment", "failed");
 			return;
@@ -61,15 +64,21 @@ public class ProfileFragment extends SherlockFragment {
 		fClient.getImageList(new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONObject response) {
+				Log.d("ProfileFragment", "some response");
 				try {
 					if (response.getBoolean("res")) {
 						Log.d("ProfileFragment", "got list");
 						JSONArray images = response.getJSONArray("images");
 						for( int i = 0; i<images.length(); i++) {
 							String id = images.getJSONObject(i).getString("imageid");
-							getImage(getActivity(), id, Constants.RETRY_LIMIT);
+							idList.add(id);
+							idStack.add(id);
 							Log.d("ProfileFragment", id);
 						}
+						mImageAdapter.notifyDataSetChanged();
+						startImageDownload(getActivity());
+						//startImageDownload(getActivity());
+						//startImageDownload(getActivity());
 						Log.d("ProfileFragment", "done images");
 					}
 					else {
@@ -85,14 +94,62 @@ public class ProfileFragment extends SherlockFragment {
 			
 			@Override
 			public void onFailure(Throwable e, JSONObject errorResponse) {
+				Log.d("ProfileFragment", "some response-");
 				e.printStackTrace();
 				getImageList(retry-1);
 			}
 			
 		});
+		Log.d("ProfileFragment", "returning");
+	}	
+	
+	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		//Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
+	}
+	
+	public static Bitmap decodeSampledBitmapFromResource(File f, int reqWidth, int reqHeight) {
+
+	    // First decode with inJustDecodeBounds=true to check dimensions
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeFile(f.getAbsolutePath(), options);
+
+	    // Calculate inSampleSize
+	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeFile(f.getAbsolutePath(), options);
+	}
+	
+	private void startImageDownload(Context context) {
+		Log.d("ProfileFragment", "startDownload");
+				synchronized (idStack) {
+			if(!idStack.isEmpty()) {
+				getImage(context, idStack.remove(idStack.size()-1), Constants.RETRY_LIMIT);
+			}	
+		}
 	}
 	
 	private void getImage(final Context context, final String id, final int retry) {
+		Log.d("ProfileFragment", "getImage "+retry);
 		if(retry == 0) {
 			return;
 		}
@@ -101,9 +158,12 @@ public class ProfileFragment extends SherlockFragment {
 			
 			@Override
 			public void onSuccess(File file) {
+				Log.d("ProfileFragment", "got image");
 				if(file!=null) {
-					imageList.add(BitmapFactory.decodeFile(file.getAbsolutePath()));	
+					Log.d("ProfileFragment", "not null");
+					imageList.add(decodeSampledBitmapFromResource(file, R.dimen.list_image_width, R.dimen.list_image_height));	
 					mImageAdapter.notifyDataSetChanged();
+					startImageDownload(context);
 				}
 			}
 			
@@ -195,12 +255,10 @@ public class ProfileFragment extends SherlockFragment {
 			} else {
 				holder = (ViewHolder) view.getTag();
 			}
-			if(position < imageList.size()) {
-				if(imageList.get(position)!=null){
-					holder.image.setImageBitmap(imageList.get(position));
-				} else {
-					holder.image.setImageResource(R.drawable.ic_loading_sun);
-				}
+			if(position < imageList.size() && imageList.get(position)!=null){
+				holder.image.setImageBitmap(imageList.get(position));
+			} else {
+				holder.image.setImageResource(R.drawable.ic_loading_sun);
 			}
 //			holder.text.setText("Item " + (position + 1));
 			return view;

@@ -141,7 +141,7 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
 		Uri mDataUrl = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 		String[] mProjection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
-		String mSortOrder = MediaStore.Images.Media._ID;
+		String mSortOrder = MediaStore.Images.Media.DATE_TAKEN;
 		
 		switch (loaderID) {
         case IMAGE_LOADER:
@@ -163,9 +163,17 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor mCursor) {
 		// TODO Auto-generated method stub
+		final Cursor c = mCursor;
 		switch (loader.getId()) {
         case IMAGE_LOADER: 
-        	processCursor(mCursor);
+        	new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+		        	processCursor(c);
+				}
+			}).start();
         	break;
 		}
 		
@@ -192,7 +200,16 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 			paths[i] = mCursor.getString(dataColIndex);
 			selection[i] = false;
 		}
+		gallery.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				mAdapter.notifyDataSetChanged();
+			}
+		});
 	}
+
 	
 	public class GalleryAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;

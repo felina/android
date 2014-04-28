@@ -136,6 +136,8 @@ int dimen galler_column_width 0x7f080016
 int dimen gallery_image_height 0x7f080013
 int dimen gallery_image_width 0x7f080014
 int dimen gallery_spacing 0x7f080015
+int dimen list_image_height 0x7f080019
+int dimen list_image_width 0x7f08001a
 int dimen login_button_height 0x7f080018
 int dimen login_edit_spacing 0x7f080017
 int dimen login_logo_height 0x7f080011

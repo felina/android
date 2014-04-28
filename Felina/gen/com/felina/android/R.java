@@ -803,6 +803,8 @@ containing a value of this type.
         public static final int gallery_image_height=0x7f080013;
         public static final int gallery_image_width=0x7f080014;
         public static final int gallery_spacing=0x7f080015;
+        public static final int list_image_height=0x7f080019;
+        public static final int list_image_width=0x7f08001a;
         public static final int login_button_height=0x7f080018;
         public static final int login_edit_spacing=0x7f080017;
         public static final int login_logo_height=0x7f080011;

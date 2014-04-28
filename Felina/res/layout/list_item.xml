@@ -11,10 +11,11 @@
         android:contentDescription="@string/ContentDescription"/> -->
     <ImageView
         android:id="@+id/listImage"
-        android:layout_width="72dip"
-        android:layout_height="72dip"
+        android:layout_width="@dimen/list_image_width"
+        android:layout_height="@dimen/list_image_height"
         android:layout_margin="3dip"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

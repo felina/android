@@ -11,5 +11,6 @@
     <dimen name="galler_column_width">90dp</dimen>
     <dimen name="login_edit_spacing">10dp</dimen>
     <dimen name="login_button_height">42dp</dimen>
-
+    <dimen name="list_image_height">192dp</dimen>
+    <dimen name="list_image_width">192dp</dimen>
 </resources>
