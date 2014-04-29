@@ -10,11 +10,14 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -32,6 +35,7 @@ public class ProfileFragment extends SherlockFragment {
 	private ArrayList<Bitmap> imageList;
 	private static FelinaClient fClient;
 	private ImageAdapter mImageAdapter;
+	private Point size;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,6 +48,10 @@ public class ProfileFragment extends SherlockFragment {
 			fClient = new FelinaClient(getActivity());
 		}
 		
+		WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		size = new Point();
+		display.getSize(size);
 		mImageAdapter = new ImageAdapter();
 		list = (ListView) rootView.findViewById(R.id.imageList);
 		idList = new ArrayList<String>();
@@ -144,7 +152,7 @@ public class ProfileFragment extends SherlockFragment {
 				synchronized (idStack) {
 			if(!idStack.isEmpty()) {
 				getImage(context, idStack.remove(idStack.size()-1), Constants.RETRY_LIMIT);
-			}	
+			}
 		}
 	}
 	
@@ -161,7 +169,8 @@ public class ProfileFragment extends SherlockFragment {
 				Log.d("ProfileFragment", "got image");
 				if(file!=null) {
 					Log.d("ProfileFragment", "not null");
-					imageList.add(decodeSampledBitmapFromResource(file, R.dimen.list_image_width, R.dimen.list_image_height));	
+					imageList.add(decodeSampledBitmapFromResource(file, 300, 500));
+					Log.d("ProfileFragment", ""+size.x);
 					mImageAdapter.notifyDataSetChanged();
 					startImageDownload(context);
 				}

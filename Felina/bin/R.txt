@@ -108,11 +108,12 @@ int color abs__bright_foreground_disabled_holo_dark 0x7f070004
 int color abs__bright_foreground_disabled_holo_light 0x7f070005
 int color abs__bright_foreground_holo_dark 0x7f070002
 int color abs__bright_foreground_holo_light 0x7f070003
-int color abs__primary_text_disable_only_holo_dark 0x7f070009
-int color abs__primary_text_disable_only_holo_light 0x7f07000a
-int color abs__primary_text_holo_dark 0x7f07000b
-int color abs__primary_text_holo_light 0x7f07000c
+int color abs__primary_text_disable_only_holo_dark 0x7f07000a
+int color abs__primary_text_disable_only_holo_light 0x7f07000b
+int color abs__primary_text_holo_dark 0x7f07000c
+int color abs__primary_text_holo_light 0x7f07000d
 int color dark_blue_login 0x7f070008
+int color gray_background 0x7f070009
 int color gray_button_bar 0x7f070006
 int color light_blue_login 0x7f070007
 int dimen abs__action_bar_default_height 0x7f080001

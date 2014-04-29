@@ -686,11 +686,12 @@ containing a value of this type.
         public static final int abs__bright_foreground_disabled_holo_light=0x7f070005;
         public static final int abs__bright_foreground_holo_dark=0x7f070002;
         public static final int abs__bright_foreground_holo_light=0x7f070003;
-        public static final int abs__primary_text_disable_only_holo_dark=0x7f070009;
-        public static final int abs__primary_text_disable_only_holo_light=0x7f07000a;
-        public static final int abs__primary_text_holo_dark=0x7f07000b;
-        public static final int abs__primary_text_holo_light=0x7f07000c;
+        public static final int abs__primary_text_disable_only_holo_dark=0x7f07000a;
+        public static final int abs__primary_text_disable_only_holo_light=0x7f07000b;
+        public static final int abs__primary_text_holo_dark=0x7f07000c;
+        public static final int abs__primary_text_holo_light=0x7f07000d;
         public static final int dark_blue_login=0x7f070008;
+        public static final int gray_background=0x7f070009;
         public static final int gray_button_bar=0x7f070006;
         public static final int light_blue_login=0x7f070007;
     }

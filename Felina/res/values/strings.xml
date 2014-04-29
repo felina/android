@@ -22,5 +22,6 @@
     <color name="gray_button_bar">#27292b</color>
     <color name="light_blue_login">#154E94</color>
     <color name="dark_blue_login">#10253E</color>
+    <color name="gray_background">#EDEDED</color>
     
 </resources>

@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:layout_margin="5dp" >
 	
 <!--     <ImageView 
         android:id="@+id/listImage"
@@ -11,8 +12,8 @@
         android:contentDescription="@string/ContentDescription"/> -->
     <ImageView
         android:id="@+id/listImage"
-        android:layout_width="@dimen/list_image_width"
-        android:layout_height="@dimen/list_image_height"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="3dip"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
