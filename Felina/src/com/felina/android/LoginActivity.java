@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -113,31 +114,36 @@ public class LoginActivity extends Activity {
     		return;
     	}
     	
-    	fClient.login(email, pass, new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(JSONObject response) {
-				dialog.dismiss();
-				try {
-					if (response.getBoolean("res")) {
-				    	CredentialUtils.writeEmail(context, email);
-				    	CredentialUtils.writePassword(context, pass);
-				    	CredentialUtils.writeName(context, response.getJSONObject("user").getString("name"));
-						setResult(RESULT_OK);
-						finish();
-					} else {
-						errTxt.setVisibility(View.VISIBLE);
+    	try {
+			fClient.login(email, pass, new JsonHttpResponseHandler(){
+				@Override
+				public void onSuccess(JSONObject response) {
+					dialog.dismiss();
+					try {
+						if (response.getBoolean("res")) {
+					    	CredentialUtils.writeEmail(context, email);
+					    	CredentialUtils.writePassword(context, pass);
+					    	CredentialUtils.writeName(context, response.getJSONObject("user").getString("name"));
+							setResult(RESULT_OK);
+							finish();
+						} else {
+							errTxt.setVisibility(View.VISIBLE);
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+						login(context, email, pass, retry-1);
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
+				}
+				
+				@Override
+				public void onFailure(Throwable e, JSONObject errorResponse) {
 					login(context, email, pass, retry-1);
 				}
-			}
-			
-			@Override
-			public void onFailure(Throwable e, JSONObject errorResponse) {
-				login(context, email, pass, retry-1);
-			}
-		});
+			});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     private void register(final Context context, final String email, final String pass, final String name, final int retry) {
@@ -146,31 +152,36 @@ public class LoginActivity extends Activity {
     		return;
     	}
     	
-    	fClient.register(email, pass, name, new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(JSONObject response) {
-				dialog.dismiss();
-				try {
-					if (response.getBoolean("res")) {
-				    	CredentialUtils.writeEmail(context, email);
-				    	CredentialUtils.writePassword(context, pass);
-				    	CredentialUtils.writeName(context, name);
-						setResult(RESULT_OK);
-						finish();
-					} else {
-						errTxt.setVisibility(View.VISIBLE);
+    	try {
+			fClient.register(email, pass, name, new JsonHttpResponseHandler(){
+				@Override
+				public void onSuccess(JSONObject response) {
+					dialog.dismiss();
+					try {
+						if (response.getBoolean("res")) {
+					    	CredentialUtils.writeEmail(context, email);
+					    	CredentialUtils.writePassword(context, pass);
+					    	CredentialUtils.writeName(context, name);
+							setResult(RESULT_OK);
+							finish();
+						} else {
+							errTxt.setVisibility(View.VISIBLE);
+							Log.e("LoginActivity", response.toString(2));
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+						login(context, email, pass, retry-1);
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
+				}
+				
+				@Override
+				public void onFailure(Throwable e, JSONObject errorResponse) {
 					login(context, email, pass, retry-1);
 				}
-			}
-			
-			@Override
-			public void onFailure(Throwable e, JSONObject errorResponse) {
-				login(context, email, pass, retry-1);
-			}
-		});
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 	
 	@Override

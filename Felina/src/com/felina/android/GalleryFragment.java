@@ -125,10 +125,8 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 	}
 
 	private void uploadImages() {
-		Intent service = new Intent(getActivity(), ImageUploadService.class);
-		service.putExtra(EXTRA_SELECTION, selection);
-		service.putExtra(EXTRA_PATHS, paths);
-		getActivity().startService(service);
+		ImageUploader mUploader = new ImageUploader(getActivity(), selection, paths);
+		mUploader.execute();
 	}
 	
 
@@ -200,8 +198,8 @@ public class GalleryFragment extends SherlockFragment implements LoaderManager.L
 			paths[i] = mCursor.getString(dataColIndex);
 			selection[i] = false;
 		}
+		
 		gallery.post(new Runnable() {
-			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub

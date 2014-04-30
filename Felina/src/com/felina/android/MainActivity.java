@@ -73,30 +73,38 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     private void login(final Context context, final String email, final String pass, final int retry) {
     	
     	if(retry == 0) {
+			Log.d("MainActivity", "Login failed");
     		return;
     	}
     	
-    	fClient.login(email, pass, new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(JSONObject response) {
-				try {
-					if (response.getBoolean("res")) {
-						setup();
-					} else {
-			            Intent loginIntent = new Intent(context, LoginActivity.class);
-			            startActivityForResult(loginIntent, Constants.REQUEST_LOGIN);
+    	try {
+			fClient.login(email, pass, new JsonHttpResponseHandler(){
+				@Override
+				public void onSuccess(JSONObject response) {
+					try {
+						Log.d("MainActivity", "Login resp: "+response.toString(4));
+						if (response.getBoolean("res")) {
+							setup();
+						} else {
+				            Intent loginIntent = new Intent(context, LoginActivity.class);
+				            startActivityForResult(loginIntent, Constants.REQUEST_LOGIN);
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+						login(context, email, pass, retry-1);
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
+				}
+				
+				@Override
+				public void onFailure(Throwable e, JSONObject errorResponse) {
+					Log.d("MainActivity", "Login failed");
 					login(context, email, pass, retry-1);
 				}
-			}
-			
-			@Override
-			public void onFailure(Throwable e, JSONObject errorResponse) {
-				login(context, email, pass, retry-1);
-			}
-		});
+			});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     private void setup() {
@@ -181,6 +189,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     		switch(resultCode) {
     		
     		case RESULT_OK:
+    			setup();
     		break;
     		
     		case RESULT_CANCELED:
@@ -193,10 +202,10 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     		if( resultCode == Activity.RESULT_OK ) {
 				System.out.println("allgood");
 				File f = new File(GalleryFragment.mImagePath);
-	            if((f.length())==0){
+	            if((f.length())==0) {
 	                f.delete();
 	            } 
-			addToGallery(GalleryFragment.mImagePath);
+	            addToGallery(GalleryFragment.mImagePath);
     		}
     	}
     	else {    		

@@ -62,6 +62,10 @@ public class ProfileFragment extends SherlockFragment {
 		return rootView;
 	}
 
+	/**
+	 * Downloads the list of image id's belonging to the user.
+	 * @param retry
+	 */
 	private void getImageList(final int retry) {
 		Log.d("ProfileFragment", "getImageList "+retry);
 		if(retry==0) {
@@ -111,6 +115,13 @@ public class ProfileFragment extends SherlockFragment {
 		Log.d("ProfileFragment", "returning");
 	}	
 	
+	/**
+	 * Calculates the required scaling size for bitmap decoding
+	 * @param options
+	 * @param reqWidth
+	 * @param reqHeight
+	 * @return the scaled size
+	 */
 	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
 		//Raw height and width of image
 		final int height = options.outHeight;
@@ -132,6 +143,13 @@ public class ProfileFragment extends SherlockFragment {
 		return inSampleSize;
 	}
 	
+	/**
+	 * Decodes the bitmap from file, scaled to required size.
+	 * @param f
+	 * @param reqWidth
+	 * @param reqHeight
+	 * @return the scaled bitmap.
+	 */
 	public static Bitmap decodeSampledBitmapFromResource(File f, int reqWidth, int reqHeight) {
 
 	    // First decode with inJustDecodeBounds=true to check dimensions
@@ -147,6 +165,10 @@ public class ProfileFragment extends SherlockFragment {
 	    return BitmapFactory.decodeFile(f.getAbsolutePath(), options);
 	}
 	
+	/**
+	 * Starts downloading a new image if there is an id left in the stack
+	 * @param context
+	 */
 	private void startImageDownload(Context context) {
 		Log.d("ProfileFragment", "startDownload");
 				synchronized (idStack) {
@@ -156,6 +178,12 @@ public class ProfileFragment extends SherlockFragment {
 		}
 	}
 	
+	/**
+	 * Downloads the image specified by the id, stores it and notifies the UI.
+	 * @param context
+	 * @param id
+	 * @param retry
+	 */
 	private void getImage(final Context context, final String id, final int retry) {
 		Log.d("ProfileFragment", "getImage "+retry);
 		if(retry == 0) {

@@ -36,12 +36,6 @@
             android:label="@string/title_activity_login"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
-
-        <service
-            android:name="com.felina.android.ImageUploadService"
-            android:exported="false" >
-        </service>
-
     </application>
 
 </manifest>
