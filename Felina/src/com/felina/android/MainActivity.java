@@ -1,7 +1,9 @@
 package com.felina.android;
 
 import java.io.File;
+import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,11 +19,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -37,6 +37,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 	
 	private SectionAdapter mAdapter;
 	private ViewPager mViewPager;
+	public static ArrayList<String> idList;
+	public static ArrayList<String> idStack;
 //	private HttpRequestClient mClient;
 	public static FelinaClient fClient;
 	private static String EMAIL;
@@ -50,10 +52,14 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         if(fClient == null) {
         	fClient = new FelinaClient(this);
         }
-        
+       
+		idList = new ArrayList<String>();
+		idStack = new ArrayList<String>();
+		
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new SectionAdapter(getSupportFragmentManager());
-
+       
+        
 //        mClient = new HttpRequestClient(this);
         //Create the adapter to fragments for the app sections.
 
@@ -67,8 +73,60 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         
        login(this, EMAIL, PASS, Constants.RETRY_LIMIT); 
        
-
     }
+    
+    /**
+	 * Downloads the list of image id's belonging to the user.
+	 * @param retry
+	 */
+	private void getImageList(final int retry) {
+		Log.d("ProfileFragment", "getImageList "+retry);
+		if(retry==0) {
+			Log.d("ProfileFragment", "failed");
+			return;
+		}
+		
+		fClient.getImageList(new JsonHttpResponseHandler() {
+			
+			@Override
+			public void onSuccess(int statuscode, JSONObject response) {
+				Log.d("ProfileFragment", "some response");
+				try {
+					if (response.getBoolean("res")) {
+						Log.d("ProfileFragment", "got list");
+						JSONArray images = response.getJSONArray("images");
+						for( int i = 0; i<images.length(); i++) {
+							String id = images.getJSONObject(i).getString("imageid");
+							idList.add(id);
+							idStack.add(id);
+							Log.d("ProfileFragment", id);
+						}
+//						startImageDownload(getActivity());
+						setup();
+						Log.d("ProfileFragment", "done images");
+					}
+					else {
+						Log.d("ProfileFragment", "not list");
+						getImageList(retry-1);
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					getImageList(retry-1);
+				}
+ 			}
+			
+			@Override
+			public void onFailure(Throwable e, JSONObject errorResponse) {
+				Log.d("ProfileFragment", "some response-");
+				e.printStackTrace();
+				getImageList(retry-1);
+			}
+			
+		});
+		
+		Log.d("ProfileFragment", "returning");
+	}	
     
     private void login(final Context context, final String email, final String pass, final int retry) {
     	
@@ -84,7 +142,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 					try {
 						Log.d("MainActivity", "Login resp: "+response.toString(4));
 						if (response.getBoolean("res")) {
-							setup();
+							getImageList(Constants.RETRY_LIMIT);
 						} else {
 				            Intent loginIntent = new Intent(context, LoginActivity.class);
 				            startActivityForResult(loginIntent, Constants.REQUEST_LOGIN);

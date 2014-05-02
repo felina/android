@@ -3,10 +3,6 @@ package com.felina.android;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,13 +21,10 @@ import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.felina.android.api.FelinaClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
-import com.loopj.android.http.JsonHttpResponseHandler;
 
 public class ProfileFragment extends SherlockFragment {
 
 	public ListView list;
-	private ArrayList<String> idList;
-	private ArrayList<String> idStack;
 	private ArrayList<Bitmap> imageList;
 	private static FelinaClient fClient;
 	private ImageAdapter mImageAdapter;
@@ -54,66 +47,13 @@ public class ProfileFragment extends SherlockFragment {
 		display.getSize(size);
 		mImageAdapter = new ImageAdapter();
 		list = (ListView) rootView.findViewById(R.id.imageList);
-		idList = new ArrayList<String>();
-		idStack = new ArrayList<String>();
 		imageList = new ArrayList<Bitmap>();
 		list.setAdapter(mImageAdapter);
-		getImageList(Constants.RETRY_LIMIT);				
+		startImageDownload(getActivity());
 		return rootView;
 	}
 
-	/**
-	 * Downloads the list of image id's belonging to the user.
-	 * @param retry
-	 */
-	private void getImageList(final int retry) {
-		Log.d("ProfileFragment", "getImageList "+retry);
-		if(retry==0) {
-			Log.d("ProfileFragment", "failed");
-			return;
-		}
-		
-		fClient.getImageList(new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(JSONObject response) {
-				Log.d("ProfileFragment", "some response");
-				try {
-					if (response.getBoolean("res")) {
-						Log.d("ProfileFragment", "got list");
-						JSONArray images = response.getJSONArray("images");
-						for( int i = 0; i<images.length(); i++) {
-							String id = images.getJSONObject(i).getString("imageid");
-							idList.add(id);
-							idStack.add(id);
-							Log.d("ProfileFragment", id);
-						}
-						mImageAdapter.notifyDataSetChanged();
-						startImageDownload(getActivity());
-						//startImageDownload(getActivity());
-						//startImageDownload(getActivity());
-						Log.d("ProfileFragment", "done images");
-					}
-					else {
-						Log.d("ProfileFragment", "not list");
-						getImageList(retry-1);
-					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					getImageList(retry-1);
-				}
- 			}
-			
-			@Override
-			public void onFailure(Throwable e, JSONObject errorResponse) {
-				Log.d("ProfileFragment", "some response-");
-				e.printStackTrace();
-				getImageList(retry-1);
-			}
-			
-		});
-		Log.d("ProfileFragment", "returning");
-	}	
+	
 	
 	/**
 	 * Calculates the required scaling size for bitmap decoding
@@ -171,9 +111,9 @@ public class ProfileFragment extends SherlockFragment {
 	 */
 	private void startImageDownload(Context context) {
 		Log.d("ProfileFragment", "startDownload");
-				synchronized (idStack) {
-			if(!idStack.isEmpty()) {
-				getImage(context, idStack.remove(idStack.size()-1), Constants.RETRY_LIMIT);
+				synchronized (MainActivity.idStack) {
+			if(!MainActivity.idStack.isEmpty()) {
+				getImage(context, MainActivity.idStack.remove(MainActivity.idStack.size()-1), Constants.RETRY_LIMIT);
 			}
 		}
 	}
@@ -213,45 +153,6 @@ public class ProfileFragment extends SherlockFragment {
 		});
 	}
 	
-//	public class ImageAdapter extends BaseAdapter {
-//		private LayoutInflater mInflater;
-//		
-//		public ImageAdapter() {
-//			mInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		}
-//		
-//		@Override
-//		public int getCount() {
-//			return images.length();
-//		}
-//
-//		@Override
-//		public Object getItem(int i) {
-//			return i;
-//		}
-//
-//		@Override
-//		public long getItemId(int i) {
-//			return i;
-//		}
-//
-//		@Override
-//		public View getView(int i, View view, ViewGroup container) {
-////			view = mInflater.inflate(R.layout.list_item, container, false);
-////			ImageView image = (ImageView) view.findViewById(R.id.listImage);
-////			Bitmap src = getImage(i);
-////			if(src!=null) {
-////				Bitmap b = Bitmap.createScaledBitmap(src, 200, 200, true);
-////				image.setImageBitmap(b);
-////			}
-////			else{
-////				image.setImageResource(R.drawable.ic_launcher);
-////			}
-////			return view;
-//		}
-//		
-//	}
-	
 	class ImageAdapter extends BaseAdapter {
 
 		private LayoutInflater mInflater;
@@ -266,7 +167,7 @@ public class ProfileFragment extends SherlockFragment {
 
 		@Override
 		public int getCount() {
-			return idList.size();
+			return MainActivity.idList.size();
 		}
 
 		@Override
